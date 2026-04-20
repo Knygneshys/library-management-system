@@ -16,7 +16,7 @@ public class AuthorServices(LibraryDbContext dbContext) : IAuthorServices
         {
             throw new EntityByNameAlreadyExistsException(dto.FullName);
         }
-        
+
         var author = new Author()
         {
             Id = Guid.NewGuid(),
@@ -24,7 +24,7 @@ public class AuthorServices(LibraryDbContext dbContext) : IAuthorServices
             Nationality = dto.Nationality,
             Biography = dto.Biography
         };
-        
+
         await dbContext.Authors.AddAsync(author);
         await dbContext.SaveChangesAsync();
 

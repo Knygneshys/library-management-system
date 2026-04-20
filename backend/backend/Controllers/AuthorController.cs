@@ -27,7 +27,7 @@ public class AuthorController(IAuthorServices authorServices) : ControllerBase
     public async Task<IActionResult> GetAllAuthors()
     {
         var authors = await authorServices.GetAllAsync();
-        
+
         return Ok(authors);
     }
 }

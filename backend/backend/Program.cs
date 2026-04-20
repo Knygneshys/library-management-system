@@ -14,7 +14,7 @@ builder.Services.AddSwaggerGen();
 
 var connectionString = builder.Configuration.GetConnectionString("SQLiteDatabase");
 
-if(string.IsNullOrEmpty(connectionString))
+if (string.IsNullOrEmpty(connectionString))
 {
     throw new InvalidOperationException("Connection string is empty!");
 }
@@ -33,7 +33,7 @@ using (var scope = app.Services.CreateScope())
 
 if (app.Environment.IsDevelopment())
 {
-    app.MapOpenApi();   
+    app.MapOpenApi();
     app.UseSwagger();
     app.UseSwaggerUI();
 }
