@@ -1,6 +1,6 @@
 using backend.Data;
 using backend.Dtos.Author;
-using backend.Exceptions.AlreadyExists;
+using backend.Exceptions;
 using backend.Models;
 using backend.Services.Interfaces;
 using Microsoft.EntityFrameworkCore;

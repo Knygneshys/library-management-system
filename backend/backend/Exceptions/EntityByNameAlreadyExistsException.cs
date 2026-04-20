@@ -1,4 +1,4 @@
-namespace backend.Exceptions.AlreadyExists;
+namespace backend.Exceptions;
 
 public class EntityByNameAlreadyExistsException : Exception
 {
