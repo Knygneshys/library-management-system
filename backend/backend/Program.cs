@@ -1,4 +1,6 @@
 using backend.Data;
+using backend.Services.Implementations;
+using backend.Services.Interfaces;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -18,6 +20,8 @@ if(string.IsNullOrEmpty(connectionString))
 }
 
 builder.Services.AddDbContext<LibraryDbContext>(opt => opt.UseSqlite(connectionString));
+
+builder.Services.AddScoped<IAuthorServices, AuthorServices>();
 
 var app = builder.Build();
 
