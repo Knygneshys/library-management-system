@@ -24,6 +24,12 @@ builder.Services.AddDbContext<LibraryDbContext>(opt => opt.UseSqlite(connectionS
 builder.Services.AddScoped<IAuthorServices, AuthorServices>();
 
 var app = builder.Build();
+using (var scope = app.Services.CreateScope())
+{
+    var db = scope.ServiceProvider.GetRequiredService<LibraryDbContext>();
+    var canConnect = db.Database.CanConnect();
+    Console.WriteLine($"DB connected: {canConnect}"); // prints true/false
+}
 
 if (app.Environment.IsDevelopment())
 {
