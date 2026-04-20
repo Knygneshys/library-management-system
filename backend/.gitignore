@@ -8,7 +8,9 @@
 
 backend/appsettings.json
 backend/appsettings.Development.json
+
 backend/Data/LibraryDb.db
+identifier.sqlite
 
 # User-specific files
 *.rsuser

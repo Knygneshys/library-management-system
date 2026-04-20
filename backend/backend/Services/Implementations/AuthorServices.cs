@@ -1,5 +1,6 @@
 using backend.Data;
 using backend.Dtos.Author;
+using backend.Exceptions.AlreadyExists;
 using backend.Models;
 using backend.Services.Interfaces;
 using Microsoft.EntityFrameworkCore;
@@ -13,7 +14,7 @@ public class AuthorServices(LibraryDbContext dbContext) : IAuthorServices
         var authorInDb = await dbContext.Authors.FirstOrDefaultAsync(a => a.FullName.Equals(dto.FullName));
         if (authorInDb is not null)
         {
-            throw new Exception("Author with the same name already exists.");
+            throw new EntityByNameAlreadyExistsException(dto.FullName);
         }
         
         var author = new Author()
