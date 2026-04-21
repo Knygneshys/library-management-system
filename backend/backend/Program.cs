@@ -24,19 +24,22 @@ builder.Services.AddDbContext<LibraryDbContext>(opt => opt.UseSqlite(connectionS
 builder.Services.AddScoped<IAuthorServices, AuthorServices>();
 
 var app = builder.Build();
-using (var scope = app.Services.CreateScope())
-{
-    var db = scope.ServiceProvider.GetRequiredService<LibraryDbContext>();
-    var canConnect = db.Database.CanConnect();
-    Console.WriteLine($"DB connected: {canConnect}"); // prints true/false
-}
 
 if (app.Environment.IsDevelopment())
 {
     app.MapOpenApi();
     app.UseSwagger();
     app.UseSwaggerUI();
+
+    using var scope = app.Services.CreateAsyncScope();
+    var dbContext = scope.ServiceProvider.GetService<LibraryDbContext>();
+    
+    if (dbContext is not null)
+    {
+        dbContext.Database.Migrate();
+    }
 }
+
 
 app.UseHttpsRedirection();
 
