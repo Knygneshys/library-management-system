@@ -3,6 +3,7 @@ import { Box } from "@mui/material";
 import { Route, Routes } from "react-router";
 import { secondaryColor } from "./constants/colorConstants";
 import { routes } from "./views/routes";
+import "./style/global.css";
 
 export default function App() {
   return (
