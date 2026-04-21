@@ -6,6 +6,7 @@ import {
   TableRow,
 } from "@mui/material";
 import type { Author } from "../../../../entities/Author";
+import { tableHeaderFontSize } from "../../../../constants/fontSizeConstants";
 
 interface Props {
   authors: Author[];
@@ -16,7 +17,9 @@ export default function AuthorTable({ authors }: Props) {
     <Table>
       <TableHead>
         <TableRow>
-          <TableCell>Full name</TableCell>
+          <TableCell sx={{ fontSize: tableHeaderFontSize }}>
+            Full name
+          </TableCell>
         </TableRow>
       </TableHead>
       <TableBody>
