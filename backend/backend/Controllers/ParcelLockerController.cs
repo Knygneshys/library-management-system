@@ -31,4 +31,45 @@ public class ParcelLockerController(IParcelLockerServices parcelLockerServices) 
         
         return Ok(parcelLockers);
     }
+
+    [HttpPut]
+    public async Task<IActionResult> UpdateParcelLocker(Guid id, [FromBody] ParcelLockerUpdateDto dto)
+    {
+        if (!id.Equals(dto.Id))
+        {
+            return BadRequest("Id mismatch.");
+        }
+
+        try
+        {
+            await parcelLockerServices.UpdateAsync(dto);
+            return NoContent();
+        }
+        catch (KeyNotFoundException ex)
+        {
+            return NotFound(ex.Message);
+        }
+        catch (Exception ex)
+        {
+            return BadRequest(ex.Message);
+        }
+    }
+
+    [HttpDelete]
+    public async Task<IActionResult> DeleteParcelLocker(Guid id)
+    {
+        try
+        {
+            await parcelLockerServices.DeleteAsync(id);
+            return NoContent();
+        }
+        catch (KeyNotFoundException ex)
+        {
+            return NotFound(ex.Message);
+        }
+        catch (Exception ex)
+        {
+            return BadRequest(ex.Message);
+        }
+    }
 }

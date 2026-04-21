@@ -13,9 +13,9 @@ public class LibraryDbContext(DbContextOptions<LibraryDbContext> options) : DbCo
         modelBuilder.Entity<Author>()
                 .HasIndex(a => a.FullName)
                 .IsUnique();
+        
         modelBuilder.Entity<ParcelLocker>()
                 .HasIndex(p => p.Address)
                 .IsUnique();
-
     }
 }

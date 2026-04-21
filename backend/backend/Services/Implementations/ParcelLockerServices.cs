@@ -34,4 +34,30 @@ public class ParcelLockerServices(LibraryDbContext dbContext) : IParcelLockerSer
     {
         return await dbContext.ParcelLockers.ToListAsync();
     }
+
+    public async Task UpdateAsync(ParcelLockerUpdateDto dto)
+    {
+        var parcelLocker = await dbContext.ParcelLockers.FindAsync(dto.Id);
+        if (parcelLocker is null)
+        {
+            throw new KeyNotFoundException("Parcel locker not found.");
+        }
+
+        parcelLocker.Address = dto.Address;
+        parcelLocker.LockerState = dto.LockerState;
+
+        await dbContext.SaveChangesAsync();
+    }
+
+    public async Task DeleteAsync(Guid id)
+    {
+        var parcelLocker = await dbContext.ParcelLockers.FindAsync(id);
+        if (parcelLocker is null)
+        {
+            throw new KeyNotFoundException("Parcel locker not found.");
+        }
+
+        dbContext.ParcelLockers.Remove(parcelLocker);
+        await dbContext.SaveChangesAsync();
+    }
 }

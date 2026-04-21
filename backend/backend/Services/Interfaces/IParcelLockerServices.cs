@@ -8,4 +8,8 @@ public interface IParcelLockerServices
     Task<Guid> CreateAsync(ParcelLockerCreateDto dto);
 
     Task<List<ParcelLocker>> GetAllAsync();
+
+    Task UpdateAsync(ParcelLockerUpdateDto dto);
+
+    Task DeleteAsync(Guid id);
 }
