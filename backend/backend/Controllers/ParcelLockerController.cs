@@ -32,17 +32,12 @@ public class ParcelLockerController(IParcelLockerServices parcelLockerServices) 
         return Ok(parcelLockers);
     }
 
-    [HttpPut]
-    public async Task<IActionResult> UpdateParcelLocker(Guid id, [FromBody] ParcelLockerUpdateDto dto)
+    [HttpPut("{address}")]
+    public async Task<IActionResult> UpdateParcelLocker(string address, [FromBody] ParcelLockerUpdateDto dto)
     {
-        if (!id.Equals(dto.Id))
-        {
-            return BadRequest("Id mismatch.");
-        }
-
         try
         {
-            await parcelLockerServices.UpdateAsync(dto);
+            await parcelLockerServices.UpdateAsync(address, dto);
             return NoContent();
         }
         catch (KeyNotFoundException ex)
