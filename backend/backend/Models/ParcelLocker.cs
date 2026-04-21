@@ -6,5 +6,5 @@ public class ParcelLocker
     
     public required string Address { get; set; }
     
-    public required ParcelLocker LockerState {get; set;}
+    public required ParcelLockerState LockerState {get; set;}
 }
