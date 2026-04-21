@@ -32,6 +32,7 @@ if (string.IsNullOrEmpty(connectionString))
 builder.Services.AddDbContext<LibraryDbContext>(opt => opt.UseSqlite(connectionString));
 
 builder.Services.AddScoped<IAuthorServices, AuthorServices>();
+builder.Services.AddScoped<IParcelLockerServices, ParcelLockerServices>();
 
 var app = builder.Build();
 
