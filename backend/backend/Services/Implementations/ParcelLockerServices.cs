@@ -3,13 +3,16 @@ using backend.Dtos.ParcelLocker;
 using backend.Exceptions;
 using backend.Models;
 using backend.Services.Interfaces;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
 namespace backend.Services.Implementations;
 
 public class ParcelLockerServices(LibraryDbContext dbContext) : IParcelLockerServices
 {
-    public async Task<Guid> CreateAsync(ParcelLockerCreateDto dto)
+    
+    private const string EntityName = "ParcelLocker";
+    public async Task<List<ParcelLocker>> CreateAsync(ParcelLockerCreateDto dto)
     {
         var parcelLockerInDb = await dbContext.ParcelLockers.FirstOrDefaultAsync(p => p.Address.Equals(dto.Address));
         if (parcelLockerInDb is not null)
@@ -26,8 +29,8 @@ public class ParcelLockerServices(LibraryDbContext dbContext) : IParcelLockerSer
 
         await dbContext.ParcelLockers.AddAsync(parcelLocker);
         await dbContext.SaveChangesAsync();
-        
-        return parcelLocker.Id;
+
+        return await GetAllAsync();
     }
 
     public async Task<List<ParcelLocker>> GetAllAsync()
@@ -35,38 +38,43 @@ public class ParcelLockerServices(LibraryDbContext dbContext) : IParcelLockerSer
         return await dbContext.ParcelLockers.ToListAsync();
     }
 
-    public async Task UpdateAsync(string oldAddress, ParcelLockerUpdateDto dto)
+    public async Task<List<ParcelLocker>> UpdateAsync(Guid id, ParcelLockerUpdateDto dto)
     {
-        var parcelLocker = await dbContext.ParcelLockers.FirstOrDefaultAsync(p => p.Address.Equals(oldAddress));
+        var parcelLocker = await dbContext.ParcelLockers.FirstOrDefaultAsync(p => p.Id.Equals(id));
         if (parcelLocker is null)
         {
             throw new KeyNotFoundException("Parcel locker not found.");
         }
         
-        if (!oldAddress.Equals(dto.Address))
+        var parcelLockerAddressChanged = !parcelLocker.Address.ToLower().Equals(dto.Address.ToLower());
+
+        if (parcelLockerAddressChanged)
         {
-            var exists = await dbContext.ParcelLockers.AnyAsync(p => p.Address.Equals(dto.Address));
-            if (exists)
+            var newAddressAlreadyExists = await dbContext.ParcelLockers.AnyAsync(p => p.Address.Equals(dto.Address));
+            if (newAddressAlreadyExists)
             {
-                throw new Exception("A parcel locker with the new address already exists.");
+                throw new ParcelLockerByAddressAlreadyExistsException(dto.Address);
             }
         }
-
+        
         parcelLocker.Address = dto.Address;
         parcelLocker.LockerState = dto.LockerState;
-
+        
         await dbContext.SaveChangesAsync();
+
+        return await GetAllAsync();
     }
 
-    public async Task DeleteAsync(Guid id)
+    public async Task<List<ParcelLocker>> DeleteAsync(Guid id)
     {
-        var parcelLocker = await dbContext.ParcelLockers.FindAsync(id);
-        if (parcelLocker is null)
+        var parcelLocker = await dbContext.ParcelLockers.FirstOrDefaultAsync(p => p.Id.Equals(id));
+        if(parcelLocker is null)
         {
-            throw new KeyNotFoundException("Parcel locker not found.");
+            throw new EntityNotFoundException(EntityName);
         }
-
+        
         dbContext.ParcelLockers.Remove(parcelLocker);
         await dbContext.SaveChangesAsync();
+        return await GetAllAsync();
     }
 }

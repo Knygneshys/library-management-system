@@ -32,17 +32,14 @@ public class ParcelLockerController(IParcelLockerServices parcelLockerServices) 
         return Ok(parcelLockers);
     }
 
-    [HttpPut("{address}")]
-    public async Task<IActionResult> UpdateParcelLocker(string address, [FromBody] ParcelLockerUpdateDto dto)
+    [HttpPut("{id:guid}")]
+    public async Task<IActionResult> UpdateParcelLocker(Guid id, [FromBody] ParcelLockerUpdateDto dto)
     {
         try
         {
-            await parcelLockerServices.UpdateAsync(address, dto);
-            return NoContent();
-        }
-        catch (KeyNotFoundException ex)
-        {
-            return NotFound(ex.Message);
+            var parcelLockers = await parcelLockerServices.UpdateAsync(id, dto);
+
+            return Ok(parcelLockers);
         }
         catch (Exception ex)
         {
@@ -50,17 +47,14 @@ public class ParcelLockerController(IParcelLockerServices parcelLockerServices) 
         }
     }
 
-    [HttpDelete]
-    public async Task<IActionResult> DeleteParcelLocker(Guid id)
+    [HttpDelete("{id:guid}")]
+    public async Task<IActionResult> DeleteParcelLocker([FromRoute] Guid id)
     {
         try
         {
-            await parcelLockerServices.DeleteAsync(id);
-            return NoContent();
-        }
-        catch (KeyNotFoundException ex)
-        {
-            return NotFound(ex.Message);
+            var parcelLockers = await parcelLockerServices.DeleteAsync(id);
+
+            return Ok(parcelLockers);
         }
         catch (Exception ex)
         {
