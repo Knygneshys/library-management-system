@@ -1,8 +1,8 @@
 import { Form, Formik } from "formik";
 import type { Author } from "../../../../../entities/Author";
 import { Guid } from "guid-typescript";
-import AuthorCreationFormContent from "../AuthorCreationFormContent/AuthorCreationFormContent";
 import { authorCreationValidation } from "../../../../../validation/author/authorCreationValidation";
+import AuthorCreationFormContent from "../AuthorCreationFormContent/AuthorCreationFormContent";
 
 interface Props {
   onSubmit: (author: Author) => void;
