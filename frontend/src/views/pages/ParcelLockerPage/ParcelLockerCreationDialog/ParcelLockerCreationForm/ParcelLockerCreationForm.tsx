@@ -3,6 +3,7 @@ import type { ParcelLocker } from "../../../../../entities/ParcelLocker";
 import { Guid } from "guid-typescript";
 import { parcelLockerCreationValidation } from "../../../../../validation/parcelLocker/parcelLockerCreationValidation";
 import ParcelLockerCreationFormContent from "../ParcelLockerCreationFormContent/ParcelLockerCreationFormContent";
+import { ParcelLockerState } from "../../../../../entities/ParcelLockerState";
 
 interface Props {
   onSubmit: (parcelLocker: ParcelLocker) => void;
@@ -16,7 +17,7 @@ interface ParcelLockerCreationFormContent {
 export default function ParcelLockerCreationForm({ onSubmit }: Props) {
   const initialValues: ParcelLockerCreationFormContent = {
     address: "",
-    lockerState: ParcelLockerState.Available,
+    lockerState: ParcelLockerState.Active,
   };
 
   const handleFormSubmit = (values: ParcelLockerCreationFormContent) => {
@@ -36,7 +37,11 @@ export default function ParcelLockerCreationForm({ onSubmit }: Props) {
       validationSchema={parcelLockerCreationValidation}
     >
       <Form>
-        <ParcelLockerCreationForm />
+        <ParcelLockerCreationForm
+          onSubmit={function (): void {
+            throw new Error("Function not implemented.");
+          }}
+        />
       </Form>
     </Formik>
   );
