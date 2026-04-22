@@ -13,9 +13,9 @@ public class AuthorController(IAuthorServices authorServices) : ControllerBase
     {
         try
         {
-            var authorId = await authorServices.CreateAsync(dto);
+            var authors = await authorServices.CreateAsync(dto);
 
-            return Ok(authorId);
+            return Ok(authors);
         }
         catch (Exception ex)
         {
@@ -29,5 +29,35 @@ public class AuthorController(IAuthorServices authorServices) : ControllerBase
         var authors = await authorServices.GetAllAsync();
 
         return Ok(authors);
+    }
+
+    [HttpPut("{id:guid}")]
+    public async Task<IActionResult> UpdateAuthor([FromRoute] Guid id, [FromBody] AuthorUpdateDto dto)
+    {
+        try
+        {
+            var authors = await authorServices.UpdateAsync(id, dto);
+
+            return Ok(authors);
+        }
+        catch (Exception ex)
+        {
+            return BadRequest(ex.Message);
+        }
+    }
+
+    [HttpDelete("{id:guid}")]
+    public async Task<IActionResult> DeleteAuthor([FromRoute] Guid id)
+    {
+        try
+        {
+            var authors = await authorServices.DeleteAsync(id);
+
+            return Ok(authors);
+        }
+        catch (Exception ex)
+        {
+            return BadRequest(ex.Message);
+        }
     }
 }
