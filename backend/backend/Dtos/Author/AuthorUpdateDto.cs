@@ -1,14 +1,10 @@
-namespace backend.Models;
+namespace backend.Dtos.Author;
 
-public class Author
+public class AuthorUpdateDto
 {
-    public Guid Id { get; set; }
-
     public required string FullName { get; set; }
 
     public required string Nationality { get; set; }
 
     public required string Biography { get; set; }
-    
-    public virtual ICollection<Book> Books { get; set; }
 }

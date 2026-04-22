@@ -5,7 +5,11 @@ namespace backend.Services.Interfaces;
 
 public interface IAuthorServices
 {
-    Task<Guid> CreateAsync(AuthorCreateDto dto);
+    Task<List<Author>> CreateAsync(AuthorCreateDto dto);
 
     Task<List<Author>> GetAllAsync();
+    
+    Task<List<Author>> UpdateAsync(Guid id, AuthorUpdateDto dto);
+    
+    Task<List<Author>> DeleteAsync(Guid id);
 }
