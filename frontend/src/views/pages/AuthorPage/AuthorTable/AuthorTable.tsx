@@ -25,8 +25,14 @@ export default function AuthorTable({
     <Table>
       <TableHead>
         <TableRow>
-          <TableCell sx={{ fontSize: tableHeaderFontSize, width: "70%" }}>
+          <TableCell sx={{ fontSize: tableHeaderFontSize, width: "10%" }}>
             Full name
+          </TableCell>
+          <TableCell sx={{ fontSize: tableHeaderFontSize, width: "10%" }}>
+            Nationality
+          </TableCell>
+          <TableCell sx={{ fontSize: tableHeaderFontSize, width: "70%" }}>
+            Biography
           </TableCell>
           <TableCell>Actions</TableCell>
         </TableRow>
@@ -35,6 +41,8 @@ export default function AuthorTable({
         {authors.map((author, index) => (
           <TableRow key={index}>
             <TableCell>{author.fullName}</TableCell>
+            <TableCell>{author.nationality}</TableCell>
+            <TableCell>{author.biography}</TableCell>
             <TableCell>
               <Stack direction={"row"} spacing={2}>
                 <Button onClick={() => onUpdateButtonClick(author)}>

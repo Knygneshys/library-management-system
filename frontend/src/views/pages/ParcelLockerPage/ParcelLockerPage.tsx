@@ -21,6 +21,7 @@ import {
   successfullUpdateMessage,
 } from "../../../utils/toastUtils";
 import ParcelLockerUpdateDialog from "./ParcelLockerUpdateDialog/ParcelLockerUpdateDialog";
+import ParcelLockerDeletionDialog from "./ParcelLockerDeletionDialog/ParcelLockerDeletionDialog";
 
 export default function ParcelLockerPage() {
   const [parcelLockers, setParcelLockers] = useState<ParcelLocker[]>([]);
@@ -29,6 +30,10 @@ export default function ParcelLockerPage() {
     useState<boolean>(false);
   const [updateDialogIsOpen, setUpdateDialogIsOpen] = useState<boolean>(false);
   const [parcelLockerThatIsBeingUpdated, setParcelLockerThatIsBeingUpdated] =
+    useState<ParcelLocker | null>(null);
+  const [deletionDialogIsOpen, setDeletionDialogIsOpen] =
+    useState<boolean>(false);
+  const [parcelLockerThatIsBeingDeleted, setParcelLockerThatIsBeingDeleted] =
     useState<ParcelLocker | null>(null);
 
   useEffect(() => {
@@ -85,15 +90,25 @@ export default function ParcelLockerPage() {
     handleUpdateDialogClose();
   };
 
+  const handleDeletionDialogOpen = (parcelLocker: ParcelLocker) => {
+    setParcelLockerThatIsBeingDeleted(parcelLocker);
+    setDeletionDialogIsOpen(true);
+  };
+
+  const handleDeletionDialogClose = () => {
+    setParcelLockerThatIsBeingDeleted(null);
+    setDeletionDialogIsOpen(false);
+  };
+
   const handleParcelLockerDelete = async (parcelLocker: ParcelLocker) => {
     try {
       const parcelLockers = await deleteParcelLocker(parcelLocker);
-
       setParcelLockers(parcelLockers);
       toast.success(successfullDeleteMessage("Parcel Locker"));
     } catch (error) {
       handleErrorToast(error);
     }
+    handleDeletionDialogClose();
   };
 
   return (
@@ -115,7 +130,7 @@ export default function ParcelLockerPage() {
       <ParcelLockerTable
         parcelLockers={parcelLockers}
         onUpdateButtonClick={handleUpdateDialogOpen}
-        onDeleteButtonClick={handleParcelLockerDelete}
+        onDeleteButtonClick={handleDeletionDialogOpen}
       />
       <ParcelLockerCreationDialog
         isOpen={creationDialogIsOpen}
@@ -128,6 +143,16 @@ export default function ParcelLockerPage() {
           parcelLocker={parcelLockerThatIsBeingUpdated}
           handleClose={handleUpdateDialogClose}
           handleSubmit={handleUpdateFormSubmit}
+        />
+      )}
+      {deletionDialogIsOpen && parcelLockerThatIsBeingDeleted && (
+        <ParcelLockerDeletionDialog
+          isOpen={deletionDialogIsOpen}
+          parcelLocker={parcelLockerThatIsBeingDeleted}
+          handleClose={handleDeletionDialogClose}
+          handleDelete={() =>
+            handleParcelLockerDelete(parcelLockerThatIsBeingDeleted)
+          }
         />
       )}
     </Box>
