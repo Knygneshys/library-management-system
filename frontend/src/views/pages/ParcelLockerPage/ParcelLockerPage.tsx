@@ -109,7 +109,7 @@ export default function ParcelLockerPage() {
             width: "200px",
           }}
         >
-          Create author
+          Create Parcel Locker
         </Button>
       </Box>
       <ParcelLockerTable

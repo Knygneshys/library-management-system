@@ -2,7 +2,7 @@ import { Form, Formik } from "formik";
 import type { ParcelLocker } from "../../../../../entities/ParcelLocker";
 import { parcelLockerUpdateValidation } from "../../../../../validation/parcelLocker/parcelLockerUpdateValidation";
 import ParcelLockerUpdateFormContent from "../ParcelLockerUpdateFormContent/ParcelLockerUpdateFormContent";
-import { ParcelLockerState } from "../../../../../entities/ParcelLockerState";
+import type { ParcelLockerState } from "../../../../../entities/ParcelLockerState";
 
 type Props = {
   parcelLocker: ParcelLocker;

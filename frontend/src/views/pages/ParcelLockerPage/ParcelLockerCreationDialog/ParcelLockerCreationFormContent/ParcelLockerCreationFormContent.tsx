@@ -9,8 +9,11 @@ export default function ParcelLockerCreationFormContent() {
       spacing={2}
       sx={{ justifyContent: "center", marginTop: "1em" }}
     >
-      <FormInputField required label={"Address"} name={"address"} />
-      <FormInputField required label={"Locker state"} name={"lockerState"} />
+      <FormInputField
+        required
+        label={"Address"}
+        name={"address"}
+      ></FormInputField>
       <FormSubmitButton label={"Create"} />
     </Grid>
   );

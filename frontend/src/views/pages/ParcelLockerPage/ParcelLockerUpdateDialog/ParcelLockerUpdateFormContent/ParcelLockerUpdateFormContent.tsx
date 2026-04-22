@@ -10,7 +10,7 @@ export default function ParcelLockerUpdateFormContent() {
       spacing={2}
       sx={{ justifyContent: "center", marginTop: "1em" }}
     >
-      <FormInputField required label={"Address"} name={"fullName"} />
+      <FormInputField required label={"Address"} name={"address"} />
       <FormInputField required label={"Locker state"} name={"lockerState"} />
       <FormSubmitButton label={"Update"} />
     </Grid>

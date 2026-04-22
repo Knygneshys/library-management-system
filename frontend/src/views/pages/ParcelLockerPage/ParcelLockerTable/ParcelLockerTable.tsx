@@ -13,7 +13,7 @@ import { tableHeaderFontSize } from "../../../../constants/fontSizeConstants";
 interface Props {
   parcelLockers: ParcelLocker[];
   onUpdateButtonClick: (parcelLocker: ParcelLocker) => void;
-  onDeleteButtonClick: (author: ParcelLocker) => void;
+  onDeleteButtonClick: (parcelLocker: ParcelLocker) => void;
 }
 
 export default function ParcelLockerTable({
@@ -26,7 +26,7 @@ export default function ParcelLockerTable({
       <TableHead>
         <TableRow>
           <TableCell sx={{ fontSize: tableHeaderFontSize, width: "70%" }}>
-            Full name
+            Address
           </TableCell>
           <TableCell>Actions</TableCell>
         </TableRow>

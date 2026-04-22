@@ -11,20 +11,18 @@ interface Props {
 
 interface ParcelLockerCreationFormContent {
   address: string;
-  lockerState: ParcelLockerState;
 }
 
 export default function ParcelLockerCreationForm({ onSubmit }: Props) {
   const initialValues: ParcelLockerCreationFormContent = {
     address: "",
-    lockerState: ParcelLockerState.Active,
   };
 
   const handleFormSubmit = (values: ParcelLockerCreationFormContent) => {
     const parcelLocker: ParcelLocker = {
       id: Guid.create(),
       address: values.address,
-      lockerState: values.lockerState,
+      lockerState: ParcelLockerState.Active,
     };
 
     onSubmit(parcelLocker);
@@ -37,11 +35,7 @@ export default function ParcelLockerCreationForm({ onSubmit }: Props) {
       validationSchema={parcelLockerCreationValidation}
     >
       <Form>
-        <ParcelLockerCreationForm
-          onSubmit={function (): void {
-            throw new Error("Function not implemented.");
-          }}
-        />
+        <ParcelLockerCreationFormContent />
       </Form>
     </Formik>
   );
