@@ -7,6 +7,7 @@ public class LibraryDbContext(DbContextOptions<LibraryDbContext> options) : DbCo
 {
     public DbSet<Author> Authors { get; set; }
     public DbSet<ParcelLocker> ParcelLockers { get; set; }
+    public DbSet<Book> Books { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -17,5 +18,15 @@ public class LibraryDbContext(DbContextOptions<LibraryDbContext> options) : DbCo
         modelBuilder.Entity<ParcelLocker>()
                 .HasIndex(p => p.Address)
                 .IsUnique();
+        
+        modelBuilder.Entity<Book>()
+                .HasIndex(b => b.Isbn)
+                .IsUnique();
+
+        modelBuilder.Entity<Book>()
+                .HasOne(b => b.Author)
+                .WithMany(a => a.Books)
+                .HasForeignKey(b => b.AuthorId)
+                .IsRequired();
     }
 }

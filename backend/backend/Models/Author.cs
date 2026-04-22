@@ -9,4 +9,6 @@ public class Author
     public required string Nationality { get; set; }
 
     public required string Biography { get; set; }
+    
+    public virtual ICollection<Book> Books { get; set; }
 }
