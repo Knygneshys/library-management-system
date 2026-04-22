@@ -74,6 +74,12 @@ public class AuthorServices(LibraryDbContext dbContext) : IAuthorServices
             throw new EntityNotFoundException(EntityName);
         }
         
+        var authorHasBooks = await dbContext.Books.AnyAsync(b => b.AuthorId.Equals(id));
+        if (authorHasBooks)
+        {
+            throw new AuthorHasBookException(author.FullName);
+        }
+        
         dbContext.Authors.Remove(author);
         await dbContext.SaveChangesAsync();
 
