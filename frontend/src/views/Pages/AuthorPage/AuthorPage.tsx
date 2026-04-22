@@ -1,8 +1,12 @@
-import { Box } from "@mui/material";
-import { getAllAuthors } from "../../../externalApiClients/clients/externalAuthorApiClient";
+import { Box, Button } from "@mui/material";
+import { getAllAuthors } from "../../../external-api-clients/clients/externalAuthorApiClient";
 import { useEffect, useState } from "react";
 import type { Author } from "../../../entities/Author";
 import AuthorTable from "./AuthorTable/AuthorTable";
+import {
+  primaryColor,
+  secondaryColor,
+} from "../../../constants/colorConstants";
 
 export default function AuthorPage() {
   const [authors, setAuthors] = useState<Author[]>([]);
@@ -19,6 +23,18 @@ export default function AuthorPage() {
 
   return (
     <Box>
+      <Box sx={{ float: "right" }}>
+        <Button
+          sx={{
+            margin: "20px",
+            background: primaryColor,
+            color: secondaryColor,
+            width: "200px",
+          }}
+        >
+          Create author
+        </Button>
+      </Box>
       <AuthorTable authors={authors} />
     </Box>
   );
