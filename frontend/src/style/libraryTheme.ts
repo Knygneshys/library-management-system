@@ -1,5 +1,9 @@
 import { createTheme } from "@mui/material/styles";
-import { primaryColor, secondaryColor } from "../constants/colorConstants";
+import {
+  entityTableBackgroundColor,
+  primaryColor,
+  secondaryColor,
+} from "../constants/colorConstants";
 
 export const libraryTheme = createTheme({
   typography: {
@@ -10,6 +14,13 @@ export const libraryTheme = createTheme({
       styleOverrides: {
         root: {
           borderColor: "rgba(0, 0, 0, 45%)",
+        },
+      },
+    },
+    MuiTable: {
+      styleOverrides: {
+        root: {
+          backgroundColor: entityTableBackgroundColor,
         },
       },
     },

@@ -25,3 +25,16 @@ export const createAuthor = async (author: Author) => {
     throw error;
   }
 };
+
+export const updateAuthor = async (author: Author) => {
+  try {
+    const uri = `${authorUris.UPDATE}/${author.id}`;
+    const data = await apiClient.put<Author[]>(uri, author);
+
+    return data.data;
+  } catch (error) {
+    console.error(error);
+
+    throw error;
+  }
+};

@@ -2,6 +2,7 @@ import { Box, Button } from "@mui/material";
 import {
   createAuthor,
   getAllAuthors,
+  updateAuthor,
 } from "../../../external-api-clients/clients/externalAuthorApiClient";
 import { useEffect, useState } from "react";
 import type { Author } from "../../../entities/Author";
@@ -16,12 +17,26 @@ import {
   handleErrorToast,
   successfullCreateMessage,
 } from "../../../utils/toastUtils";
+import AuthorUpdateDialog from "./AuthorUpdateDialog/AuthorUpdateDialog";
 
 export default function AuthorPage() {
   const [authors, setAuthors] = useState<Author[]>([]);
 
   const [creationDialogIsOpen, setCreationDialogIsOpen] =
     useState<boolean>(false);
+  const [updateDialogIsOpen, setUpdateDialogIsOpen] = useState<boolean>(false);
+  const [authorThatIsBeingUpdated, setAuthorThatIsBeingUpdated] =
+    useState<Author | null>(null);
+
+  useEffect(() => {
+    const fetchAuthors = async () => {
+      const data = await getAllAuthors();
+
+      setAuthors(data);
+    };
+
+    fetchAuthors();
+  }, []);
 
   const handleCreationDialogOpen = () => {
     setCreationDialogIsOpen(true);
@@ -44,15 +59,28 @@ export default function AuthorPage() {
     handleCreationDialogClose();
   };
 
-  useEffect(() => {
-    const fetchAuthors = async () => {
-      const data = await getAllAuthors();
+  const handleUpdateDialogOpen = (author: Author) => {
+    setAuthorThatIsBeingUpdated(author);
+    setUpdateDialogIsOpen(true);
+  };
 
-      setAuthors(data);
-    };
+  const handleUpdateDialogClose = () => {
+    setAuthorThatIsBeingUpdated(null);
+    setUpdateDialogIsOpen(false);
+  };
 
-    fetchAuthors();
-  }, []);
+  const handleUpdateFormSubmit = async (author: Author) => {
+    try {
+      const authors = await updateAuthor(author);
+
+      setAuthors(authors);
+      toast.success(successfullCreateMessage("Author"));
+    } catch (error) {
+      handleErrorToast(error);
+    }
+
+    handleUpdateDialogClose();
+  };
 
   return (
     <Box>
@@ -70,12 +98,23 @@ export default function AuthorPage() {
           Create author
         </Button>
       </Box>
-      <AuthorTable authors={authors} />
+      <AuthorTable
+        authors={authors}
+        onUpdateButtonClick={handleUpdateDialogOpen}
+      />
       <AuthorCreationDialog
         isOpen={creationDialogIsOpen}
         handleClose={handleCreationDialogClose}
         onSubmit={handleCreationFormSubmit}
       />
+      {updateDialogIsOpen && authorThatIsBeingUpdated && (
+        <AuthorUpdateDialog
+          isOpen={updateDialogIsOpen}
+          author={authorThatIsBeingUpdated}
+          handleClose={handleUpdateDialogClose}
+          handleSubmit={handleUpdateFormSubmit}
+        />
+      )}
     </Box>
   );
 }
