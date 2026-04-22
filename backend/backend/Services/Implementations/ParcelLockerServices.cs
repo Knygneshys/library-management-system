@@ -9,7 +9,7 @@ namespace backend.Services.Implementations;
 
 public class ParcelLockerServices(LibraryDbContext dbContext) : IParcelLockerServices
 {
-    public async Task<Guid> CreateAsync(ParcelLockerCreateDto dto)
+    public async Task<List<ParcelLocker>> CreateAsync(ParcelLockerCreateDto dto)
     {
         var parcelLockerInDb = await dbContext.ParcelLockers.FirstOrDefaultAsync(p => p.Address.Equals(dto.Address));
         if (parcelLockerInDb is not null)
@@ -26,8 +26,8 @@ public class ParcelLockerServices(LibraryDbContext dbContext) : IParcelLockerSer
 
         await dbContext.ParcelLockers.AddAsync(parcelLocker);
         await dbContext.SaveChangesAsync();
-        
-        return parcelLocker.Id;
+
+        return await GetAllAsync();
     }
 
     public async Task<List<ParcelLocker>> GetAllAsync()

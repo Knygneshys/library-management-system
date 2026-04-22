@@ -5,7 +5,7 @@ namespace backend.Services.Interfaces;
 
 public interface IParcelLockerServices
 {
-    Task<Guid> CreateAsync(ParcelLockerCreateDto dto);
+    Task<List<ParcelLocker>> CreateAsync(ParcelLockerCreateDto dto);
 
     Task<List<ParcelLocker>> GetAllAsync();
 
