@@ -4,3 +4,10 @@ export const authorUris = {
   UPDATE: "Author",
   DELETE: "Author",
 };
+
+export const parcelLockerUris = {
+  GET_ALL: "ParcelLocker",
+  CREATE: "ParcelLocker",
+  UPDATE: "ParcelLocker",
+  DELETE: "ParcelLocker",
+};
