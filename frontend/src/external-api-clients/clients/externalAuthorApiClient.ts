@@ -1,5 +1,5 @@
 import { apiClient } from "../apiClient";
-import { authorUris } from "../api-utils/apiUriUtils";
+import { authorUris } from "../../utils/apiUriUtils";
 import { type Author } from "../../entities/Author";
 
 export const getAllAuthors = async () => {

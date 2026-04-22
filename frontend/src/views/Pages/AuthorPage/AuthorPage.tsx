@@ -7,9 +7,25 @@ import {
   primaryColor,
   secondaryColor,
 } from "../../../constants/colorConstants";
+import AuthorCreationDialog from "./AuthorCreationDialog/AuthorCreationDialog";
 
 export default function AuthorPage() {
   const [authors, setAuthors] = useState<Author[]>([]);
+
+  const [creationDialogIsOpen, setCreationDialogIsOpen] =
+    useState<boolean>(false);
+
+  const handleCreationDialogOpen = () => {
+    setCreationDialogIsOpen(true);
+  };
+
+  const handleCreationDialogClose = () => {
+    setCreationDialogIsOpen(false);
+  };
+
+  const handleCreationFormSubmit = (author: Author) => {
+    console.log(author);
+  };
 
   useEffect(() => {
     const fetchAuthors = async () => {
@@ -25,6 +41,7 @@ export default function AuthorPage() {
     <Box>
       <Box sx={{ float: "right" }}>
         <Button
+          onClick={handleCreationDialogOpen}
           sx={{
             margin: "20px",
             background: primaryColor,
@@ -36,6 +53,11 @@ export default function AuthorPage() {
         </Button>
       </Box>
       <AuthorTable authors={authors} />
+      <AuthorCreationDialog
+        isOpen={creationDialogIsOpen}
+        handleClose={handleCreationDialogClose}
+        onSubmit={handleCreationFormSubmit}
+      />
     </Box>
   );
 }
