@@ -38,3 +38,16 @@ export const updateAuthor = async (author: Author) => {
     throw error;
   }
 };
+
+export const deleteAuthor = async (author: Author) => {
+  try {
+    const uri = `${authorUris.DELETE}/${author.id}`;
+    const data = await apiClient.delete<Author[]>(uri);
+
+    return data.data;
+  } catch (error) {
+    console.error(error);
+
+    throw error;
+  }
+};
