@@ -13,7 +13,7 @@ public class AuthorServices(LibraryDbContext dbContext) : IAuthorServices
     
     public async Task<List<Author>> CreateAsync(AuthorCreateDto dto)
     {
-        var authorInDb = await dbContext.Authors.FirstOrDefaultAsync(a => a.FullName.Equals(dto.FullName));
+        var authorInDb = await dbContext.Authors.FirstOrDefaultAsync(a => a.FullName.ToLower().Equals(dto.FullName.ToLower()));
         if (authorInDb is not null)
         {
             throw new EntityByNameAlreadyExistsException(dto.FullName);
