@@ -38,9 +38,9 @@ public class ParcelLockerServices(LibraryDbContext dbContext) : IParcelLockerSer
         return await dbContext.ParcelLockers.ToListAsync();
     }
 
-    public async Task<List<ParcelLocker>> UpdateAsync(string oldAddress, ParcelLockerUpdateDto dto)
+    public async Task<List<ParcelLocker>> UpdateAsync(Guid id, ParcelLockerUpdateDto dto)
     {
-        var parcelLocker = await dbContext.ParcelLockers.FirstOrDefaultAsync(p => p.Address.Equals(oldAddress));
+        var parcelLocker = await dbContext.ParcelLockers.FirstOrDefaultAsync(p => p.Id.Equals(id));
         if (parcelLocker is null)
         {
             throw new KeyNotFoundException("Parcel locker not found.");

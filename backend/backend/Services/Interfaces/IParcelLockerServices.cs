@@ -10,7 +10,7 @@ public interface IParcelLockerServices
 
     Task<List<ParcelLocker>> GetAllAsync();
 
-    Task<List<ParcelLocker>> UpdateAsync(string oldAddress, ParcelLockerUpdateDto dto);
+    Task<List<ParcelLocker>> UpdateAsync(Guid id, ParcelLockerUpdateDto dto);
 
     Task<List<ParcelLocker>> DeleteAsync(Guid id);
 }

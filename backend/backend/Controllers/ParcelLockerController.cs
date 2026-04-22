@@ -32,12 +32,12 @@ public class ParcelLockerController(IParcelLockerServices parcelLockerServices) 
         return Ok(parcelLockers);
     }
 
-    [HttpPut("{address}")]
-    public async Task<IActionResult> UpdateParcelLocker(string address, [FromBody] ParcelLockerUpdateDto dto)
+    [HttpPut("{id:guid}")]
+    public async Task<IActionResult> UpdateParcelLocker(Guid id, [FromBody] ParcelLockerUpdateDto dto)
     {
         try
         {
-            var parcelLockers = await parcelLockerServices.UpdateAsync(address, dto);
+            var parcelLockers = await parcelLockerServices.UpdateAsync(id, dto);
 
             return Ok(parcelLockers);
         }
