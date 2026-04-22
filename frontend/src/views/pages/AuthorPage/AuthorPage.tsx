@@ -108,6 +108,7 @@ export default function AuthorPage() {
     } catch (error) {
       handleErrorToast(error);
     }
+    handleDeletionDialogClose()
   };
 
   return (

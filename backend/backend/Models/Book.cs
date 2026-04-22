@@ -17,4 +17,8 @@ public class Book
     public Guid AuthorId { get; set; }
     
     public Author Author { get; set; }
+
+    public Guid PrintingHouseId { get; set; }
+
+    public PrintingHouse PrintingHouse { get; set; }
 }
