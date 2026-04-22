@@ -13,3 +13,15 @@ export const getAllAuthors = async () => {
     return [];
   }
 };
+
+export const createAuthor = async (author: Author) => {
+  try {
+    const data = await apiClient.post<Author[]>(authorUris.CREATE, author);
+
+    return data.data;
+  } catch (error) {
+    console.error(error);
+
+    throw error;
+  }
+};

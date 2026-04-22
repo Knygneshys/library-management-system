@@ -1,5 +1,8 @@
 import { Box, Button } from "@mui/material";
-import { getAllAuthors } from "../../../external-api-clients/clients/externalAuthorApiClient";
+import {
+  createAuthor,
+  getAllAuthors,
+} from "../../../external-api-clients/clients/externalAuthorApiClient";
 import { useEffect, useState } from "react";
 import type { Author } from "../../../entities/Author";
 import AuthorTable from "./AuthorTable/AuthorTable";
@@ -8,6 +11,11 @@ import {
   secondaryColor,
 } from "../../../constants/colorConstants";
 import AuthorCreationDialog from "./AuthorCreationDialog/AuthorCreationDialog";
+import toast from "react-hot-toast";
+import {
+  handleErrorToast,
+  successfullCreateMessage,
+} from "../../../utils/toastUtils";
 
 export default function AuthorPage() {
   const [authors, setAuthors] = useState<Author[]>([]);
@@ -23,8 +31,17 @@ export default function AuthorPage() {
     setCreationDialogIsOpen(false);
   };
 
-  const handleCreationFormSubmit = (author: Author) => {
-    console.log(author);
+  const handleCreationFormSubmit = async (author: Author) => {
+    try {
+      const authors = await createAuthor(author);
+
+      setAuthors(authors);
+      toast.success(successfullCreateMessage("Author"));
+    } catch (error) {
+      handleErrorToast(error);
+    }
+
+    handleCreationDialogClose();
   };
 
   useEffect(() => {
@@ -44,6 +61,7 @@ export default function AuthorPage() {
           onClick={handleCreationDialogOpen}
           sx={{
             margin: "20px",
+            marginTop: "70px",
             background: primaryColor,
             color: secondaryColor,
             width: "200px",
