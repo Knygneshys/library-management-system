@@ -9,6 +9,7 @@ import {
 } from "@mui/material";
 import type { ParcelLocker } from "../../../../entities/ParcelLocker";
 import { tableHeaderFontSize } from "../../../../constants/fontSizeConstants";
+import { ParcelLockerState } from "../../../../entities/ParcelLockerState";
 
 interface Props {
   parcelLockers: ParcelLocker[];
@@ -25,8 +26,11 @@ export default function ParcelLockerTable({
     <Table>
       <TableHead>
         <TableRow>
-          <TableCell sx={{ fontSize: tableHeaderFontSize, width: "70%" }}>
+          <TableCell sx={{ fontSize: tableHeaderFontSize, width: "10%" }}>
             Address
+          </TableCell>
+          <TableCell sx={{ fontSize: tableHeaderFontSize, width: "70%" }}>
+            Locker state
           </TableCell>
           <TableCell>Actions</TableCell>
         </TableRow>
@@ -35,6 +39,7 @@ export default function ParcelLockerTable({
         {parcelLockers.map((parcelLocker, index) => (
           <TableRow key={index}>
             <TableCell>{parcelLocker.address}</TableCell>
+            <TableCell>{ParcelLockerState[parcelLocker.lockerState]}</TableCell>
             <TableCell>
               <Stack direction={"row"} spacing={2}>
                 <Button onClick={() => onUpdateButtonClick(parcelLocker)}>
