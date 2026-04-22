@@ -1,6 +1,7 @@
 import { Box, Button } from "@mui/material";
 import {
   createAuthor,
+  deleteAuthor,
   getAllAuthors,
   updateAuthor,
 } from "../../../external-api-clients/clients/externalAuthorApiClient";
@@ -16,6 +17,8 @@ import toast from "react-hot-toast";
 import {
   handleErrorToast,
   successfullCreateMessage,
+  successfullDeleteMessage,
+  successfullUpdateMessage,
 } from "../../../utils/toastUtils";
 import AuthorUpdateDialog from "./AuthorUpdateDialog/AuthorUpdateDialog";
 
@@ -74,12 +77,23 @@ export default function AuthorPage() {
       const authors = await updateAuthor(author);
 
       setAuthors(authors);
-      toast.success(successfullCreateMessage("Author"));
+      toast.success(successfullUpdateMessage("Author"));
     } catch (error) {
       handleErrorToast(error);
     }
 
     handleUpdateDialogClose();
+  };
+
+  const handleAuthorDelete = async (author: Author) => {
+    try {
+      const authors = await deleteAuthor(author);
+
+      setAuthors(authors);
+      toast.success(successfullDeleteMessage("Author"));
+    } catch (error) {
+      handleErrorToast(error);
+    }
   };
 
   return (
@@ -101,6 +115,7 @@ export default function AuthorPage() {
       <AuthorTable
         authors={authors}
         onUpdateButtonClick={handleUpdateDialogOpen}
+        onDeleteButtonClick={handleAuthorDelete}
       />
       <AuthorCreationDialog
         isOpen={creationDialogIsOpen}
