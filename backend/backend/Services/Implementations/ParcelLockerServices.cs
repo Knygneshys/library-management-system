@@ -14,7 +14,7 @@ public class ParcelLockerServices(LibraryDbContext dbContext) : IParcelLockerSer
     private const string EntityName = "ParcelLocker";
     public async Task<List<ParcelLocker>> CreateAsync(ParcelLockerCreateDto dto)
     {
-        var parcelLockerInDb = await dbContext.ParcelLockers.FirstOrDefaultAsync(p => p.Address.Equals(dto.Address));
+        var parcelLockerInDb = await dbContext.ParcelLockers.FirstOrDefaultAsync(p => p.Address.ToLower().Equals(dto.Address.ToLower()));
         if (parcelLockerInDb is not null)
         {
             throw new ParcelLockerByAddressAlreadyExistsException(dto.Address);
@@ -50,7 +50,7 @@ public class ParcelLockerServices(LibraryDbContext dbContext) : IParcelLockerSer
 
         if (parcelLockerAddressChanged)
         {
-            var newAddressAlreadyExists = await dbContext.ParcelLockers.AnyAsync(p => p.Address.Equals(dto.Address));
+            var newAddressAlreadyExists = await dbContext.ParcelLockers.AnyAsync(p => p.Address.ToLower().Equals(dto.Address.ToLower()));
             if (newAddressAlreadyExists)
             {
                 throw new ParcelLockerByAddressAlreadyExistsException(dto.Address);
