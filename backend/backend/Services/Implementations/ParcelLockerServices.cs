@@ -46,9 +46,9 @@ public class ParcelLockerServices(LibraryDbContext dbContext) : IParcelLockerSer
             throw new KeyNotFoundException("Parcel locker not found.");
         }
         
-        var parcelLockerAddresChanged = !parcelLocker.Address.ToLower().Equals(dto.Address.ToLower());
+        var parcelLockerAddressChanged = !parcelLocker.Address.ToLower().Equals(dto.Address.ToLower());
 
-        if (parcelLockerAddresChanged)
+        if (parcelLockerAddressChanged)
         {
             var newAddressAlreadyExists = await dbContext.ParcelLockers.AnyAsync(p => p.Address.Equals(dto.Address));
             if (newAddressAlreadyExists)
