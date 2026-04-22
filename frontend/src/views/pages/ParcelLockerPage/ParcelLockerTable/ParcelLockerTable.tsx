@@ -7,17 +7,18 @@ import {
   TableHead,
   TableRow,
 } from "@mui/material";
-import type { Author } from "../../../../entities/Author";
+import type { ParcelLocker } from "../../../../entities/ParcelLocker";
 import { tableHeaderFontSize } from "../../../../constants/fontSizeConstants";
+import { ParcelLockerState } from "../../../../entities/ParcelLockerState";
 
 interface Props {
-  authors: Author[];
-  onUpdateButtonClick: (author: Author) => void;
-  onDeleteButtonClick: (author: Author) => void;
+  parcelLockers: ParcelLocker[];
+  onUpdateButtonClick: (parcelLocker: ParcelLocker) => void;
+  onDeleteButtonClick: (parcelLocker: ParcelLocker) => void;
 }
 
-export default function AuthorTable({
-  authors,
+export default function ParcelLockerTable({
+  parcelLockers,
   onUpdateButtonClick,
   onDeleteButtonClick,
 }: Props) {
@@ -26,29 +27,25 @@ export default function AuthorTable({
       <TableHead>
         <TableRow>
           <TableCell sx={{ fontSize: tableHeaderFontSize, width: "10%" }}>
-            Full name
-          </TableCell>
-          <TableCell sx={{ fontSize: tableHeaderFontSize, width: "10%" }}>
-            Nationality
+            Address
           </TableCell>
           <TableCell sx={{ fontSize: tableHeaderFontSize, width: "70%" }}>
-            Biography
+            Locker state
           </TableCell>
           <TableCell>Actions</TableCell>
         </TableRow>
       </TableHead>
       <TableBody>
-        {authors.map((author, index) => (
+        {parcelLockers.map((parcelLocker, index) => (
           <TableRow key={index}>
-            <TableCell>{author.fullName}</TableCell>
-            <TableCell>{author.nationality}</TableCell>
-            <TableCell>{author.biography}</TableCell>
+            <TableCell>{parcelLocker.address}</TableCell>
+            <TableCell>{ParcelLockerState[parcelLocker.lockerState]}</TableCell>
             <TableCell>
               <Stack direction={"row"} spacing={2}>
-                <Button onClick={() => onUpdateButtonClick(author)}>
+                <Button onClick={() => onUpdateButtonClick(parcelLocker)}>
                   Update
                 </Button>
-                <Button onClick={() => onDeleteButtonClick(author)}>
+                <Button onClick={() => onDeleteButtonClick(parcelLocker)}>
                   Delete
                 </Button>
               </Stack>

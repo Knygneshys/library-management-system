@@ -1,15 +1,16 @@
 ﻿using backend.Dtos.ParcelLocker;
 using backend.Models;
+using Microsoft.AspNetCore.Mvc;
 
 namespace backend.Services.Interfaces;
 
 public interface IParcelLockerServices
 {
-    Task<Guid> CreateAsync(ParcelLockerCreateDto dto);
+    Task<List<ParcelLocker>> CreateAsync(ParcelLockerCreateDto dto);
 
     Task<List<ParcelLocker>> GetAllAsync();
 
-    Task UpdateAsync(string oldAddress, ParcelLockerUpdateDto dto);
+    Task<List<ParcelLocker>> UpdateAsync(Guid id, ParcelLockerUpdateDto dto);
 
-    Task DeleteAsync(Guid id);
+    Task<List<ParcelLocker>> DeleteAsync(Guid id);
 }

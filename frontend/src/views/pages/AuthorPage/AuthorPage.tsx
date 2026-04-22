@@ -21,6 +21,7 @@ import {
   successfullUpdateMessage,
 } from "../../../utils/toastUtils";
 import AuthorUpdateDialog from "./AuthorUpdateDialog/AuthorUpdateDialog";
+import AuthorDeletionDialog from "./AuthorDeletionDialog/AuthorDeletionDialog";
 
 export default function AuthorPage() {
   const [authors, setAuthors] = useState<Author[]>([]);
@@ -29,6 +30,10 @@ export default function AuthorPage() {
     useState<boolean>(false);
   const [updateDialogIsOpen, setUpdateDialogIsOpen] = useState<boolean>(false);
   const [authorThatIsBeingUpdated, setAuthorThatIsBeingUpdated] =
+    useState<Author | null>(null);
+  const [deletionDialogIsOpen, setDeletionDialogIsOpen] =
+    useState<boolean>(false);
+  const [authorThatIsBeingDeleted, setAuthorThatIsBeingDeleted] =
     useState<Author | null>(null);
 
   useEffect(() => {
@@ -85,10 +90,19 @@ export default function AuthorPage() {
     handleUpdateDialogClose();
   };
 
+  const handleDeletionDialogOpen = (author: Author) => {
+    setAuthorThatIsBeingDeleted(author);
+    setDeletionDialogIsOpen(true);
+  };
+
+  const handleDeletionDialogClose = () => {
+    setAuthorThatIsBeingDeleted(null);
+    setDeletionDialogIsOpen(false);
+  };
+
   const handleAuthorDelete = async (author: Author) => {
     try {
       const authors = await deleteAuthor(author);
-
       setAuthors(authors);
       toast.success(successfullDeleteMessage("Author"));
     } catch (error) {
@@ -115,7 +129,7 @@ export default function AuthorPage() {
       <AuthorTable
         authors={authors}
         onUpdateButtonClick={handleUpdateDialogOpen}
-        onDeleteButtonClick={handleAuthorDelete}
+        onDeleteButtonClick={handleDeletionDialogOpen}
       />
       <AuthorCreationDialog
         isOpen={creationDialogIsOpen}
@@ -128,6 +142,14 @@ export default function AuthorPage() {
           author={authorThatIsBeingUpdated}
           handleClose={handleUpdateDialogClose}
           handleSubmit={handleUpdateFormSubmit}
+        />
+      )}
+      {deletionDialogIsOpen && authorThatIsBeingDeleted && (
+        <AuthorDeletionDialog
+          isOpen={deletionDialogIsOpen}
+          author={authorThatIsBeingDeleted}
+          handleClose={handleDeletionDialogClose}
+          handleDelete={() => handleAuthorDelete(authorThatIsBeingDeleted)}
         />
       )}
     </Box>
