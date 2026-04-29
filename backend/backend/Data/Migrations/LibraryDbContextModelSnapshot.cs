@@ -142,15 +142,6 @@ namespace backend.Data.Migrations
                     b.ToTable("ParcelLockers");
                 });
 
-            modelBuilder.Entity("Locker", b =>
-                {
-                    b.HasOne("backend.Models.ParcelLocker", "ParcelLocker")
-                        .WithMany("Lockers")
-                        .HasForeignKey("ParcelLockerId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("ParcelLocker");
             modelBuilder.Entity("backend.Models.PrintingHouse", b =>
                 {
                     b.Property<Guid>("Id")
@@ -181,6 +172,17 @@ namespace backend.Data.Migrations
                     b.ToTable("PrintingHouses");
                 });
 
+            modelBuilder.Entity("Locker", b =>
+                {
+                    b.HasOne("backend.Models.ParcelLocker", "ParcelLocker")
+                        .WithMany("Lockers")
+                        .HasForeignKey("ParcelLockerId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("ParcelLocker");
+                });
+
             modelBuilder.Entity("backend.Models.Book", b =>
                 {
                     b.HasOne("backend.Models.Author", "Author")
@@ -209,7 +211,7 @@ namespace backend.Data.Migrations
                 {
                     b.Navigation("Lockers");
                 });
-                
+
             modelBuilder.Entity("backend.Models.PrintingHouse", b =>
                 {
                     b.Navigation("Books");

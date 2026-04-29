@@ -11,7 +11,7 @@ using backend.Data;
 namespace backend.Migrations
 {
     [DbContext(typeof(LibraryDbContext))]
-    [Migration("20260429150618_AddLocker")]
+    [Migration("20260429181920_AddLocker")]
     partial class AddLocker
     {
         /// <inheritdoc />
@@ -98,6 +98,9 @@ namespace backend.Migrations
                         .IsRequired()
                         .HasColumnType("TEXT");
 
+                    b.Property<Guid>("PrintingHouseId")
+                        .HasColumnType("TEXT");
+
                     b.Property<DateTime>("PublishedAt")
                         .HasColumnType("TEXT");
 
@@ -115,6 +118,8 @@ namespace backend.Migrations
 
                     b.HasIndex("Isbn")
                         .IsUnique();
+
+                    b.HasIndex("PrintingHouseId");
 
                     b.ToTable("Books");
                 });
@@ -140,6 +145,36 @@ namespace backend.Migrations
                     b.ToTable("ParcelLockers");
                 });
 
+            modelBuilder.Entity("backend.Models.PrintingHouse", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Address")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Phone")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Website")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("Name")
+                        .IsUnique();
+
+                    b.ToTable("PrintingHouses");
+                });
+
             modelBuilder.Entity("Locker", b =>
                 {
                     b.HasOne("backend.Models.ParcelLocker", "ParcelLocker")
@@ -159,7 +194,15 @@ namespace backend.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.HasOne("backend.Models.PrintingHouse", "PrintingHouse")
+                        .WithMany("Books")
+                        .HasForeignKey("PrintingHouseId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.Navigation("Author");
+
+                    b.Navigation("PrintingHouse");
                 });
 
             modelBuilder.Entity("backend.Models.Author", b =>
@@ -170,6 +213,11 @@ namespace backend.Migrations
             modelBuilder.Entity("backend.Models.ParcelLocker", b =>
                 {
                     b.Navigation("Lockers");
+                });
+
+            modelBuilder.Entity("backend.Models.PrintingHouse", b =>
+                {
+                    b.Navigation("Books");
                 });
 #pragma warning restore 612, 618
         }
