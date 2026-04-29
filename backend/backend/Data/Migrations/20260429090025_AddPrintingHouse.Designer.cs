@@ -2,55 +2,23 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using backend.Data;
 
 #nullable disable
 
-namespace backend.Data.Migrations
+namespace backend.Migrations
 {
     [DbContext(typeof(LibraryDbContext))]
-    partial class LibraryDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260429090025_AddPrintingHouse")]
+    partial class AddPrintingHouse
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "10.0.6");
-
-            modelBuilder.Entity("Locker", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("TEXT");
-
-                    b.Property<double>("Height")
-                        .HasColumnType("REAL");
-
-                    b.Property<double>("Length")
-                        .HasColumnType("REAL");
-
-                    b.Property<string>("LocationCode")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
-
-                    b.Property<int>("LockerState")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<Guid>("ParcelLockerId")
-                        .HasColumnType("TEXT");
-
-                    b.Property<double>("Width")
-                        .HasColumnType("REAL");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("LocationCode")
-                        .IsUnique();
-
-                    b.HasIndex("ParcelLockerId");
-
-                    b.ToTable("Lockers");
-                });
 
             modelBuilder.Entity("backend.Models.Author", b =>
                 {
@@ -142,15 +110,6 @@ namespace backend.Data.Migrations
                     b.ToTable("ParcelLockers");
                 });
 
-            modelBuilder.Entity("Locker", b =>
-                {
-                    b.HasOne("backend.Models.ParcelLocker", "ParcelLocker")
-                        .WithMany("Lockers")
-                        .HasForeignKey("ParcelLockerId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("ParcelLocker");
             modelBuilder.Entity("backend.Models.PrintingHouse", b =>
                 {
                     b.Property<Guid>("Id")
@@ -205,11 +164,6 @@ namespace backend.Data.Migrations
                     b.Navigation("Books");
                 });
 
-            modelBuilder.Entity("backend.Models.ParcelLocker", b =>
-                {
-                    b.Navigation("Lockers");
-                });
-                
             modelBuilder.Entity("backend.Models.PrintingHouse", b =>
                 {
                     b.Navigation("Books");

@@ -9,6 +9,7 @@ public class LibraryDbContext(DbContextOptions<LibraryDbContext> options) : DbCo
     public DbSet<ParcelLocker> ParcelLockers { get; set; }
     public DbSet<Locker> Lockers { get; set; }
     public DbSet<Book> Books { get; set; }
+    public DbSet<PrintingHouse> PrintingHouses { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -39,5 +40,10 @@ public class LibraryDbContext(DbContextOptions<LibraryDbContext> options) : DbCo
                 .WithMany(a => a.Books)
                 .HasForeignKey(b => b.AuthorId)
                 .IsRequired();
+
+        modelBuilder.Entity<PrintingHouse>()
+                .HasIndex(a => a.Name)
+                .IsUnique();
+
     }
 }
