@@ -27,9 +27,9 @@ public class ParcelLockerController(IParcelLockerServices parcelLockerServices) 
     [HttpGet]
     public async Task<IActionResult> GetAllParcelLockers()
     {
-        var parcelLockers = await parcelLockerServices.GetAllAsync();
+        var parcelLocker = await parcelLockerServices.GetAllAsync();
         
-        return Ok(parcelLockers);
+        return Ok(parcelLocker);
     }
 
     [HttpPut("{id:guid}")]
@@ -37,9 +37,9 @@ public class ParcelLockerController(IParcelLockerServices parcelLockerServices) 
     {
         try
         {
-            var parcelLockers = await parcelLockerServices.UpdateAsync(id, dto);
+            var parcelLocker = await parcelLockerServices.UpdateAsync(id, dto);
 
-            return Ok(parcelLockers);
+            return Ok(parcelLocker);
         }
         catch (Exception ex)
         {
@@ -52,9 +52,9 @@ public class ParcelLockerController(IParcelLockerServices parcelLockerServices) 
     {
         try
         {
-            var parcelLockers = await parcelLockerServices.DeleteAsync(id);
+            parcelLockerServices.Delete(id);
 
-            return Ok(parcelLockers);
+            return NoContent();
         }
         catch (Exception ex)
         {
