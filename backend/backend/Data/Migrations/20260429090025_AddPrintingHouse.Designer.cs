@@ -11,8 +11,8 @@ using backend.Data;
 namespace backend.Migrations
 {
     [DbContext(typeof(LibraryDbContext))]
-    [Migration("20260422222028_AddPrintingHouseTable")]
-    partial class AddPrintingHouseTable
+    [Migration("20260429090025_AddPrintingHouse")]
+    partial class AddPrintingHouse
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
