@@ -33,6 +33,7 @@ builder.Services.AddDbContext<LibraryDbContext>(opt => opt.UseSqlite(connectionS
 
 builder.Services.AddScoped<IAuthorServices, AuthorServices>();
 builder.Services.AddScoped<IParcelLockerServices, ParcelLockerServices>();
+builder.Services.AddScoped<IPrintingHouseServices, PrintingHouseServices>();
 
 var app = builder.Build();
 
