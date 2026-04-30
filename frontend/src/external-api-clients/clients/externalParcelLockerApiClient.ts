@@ -16,7 +16,7 @@ export const getAllParcelLockers = async () => {
 
 export const createParcelLocker = async (parcelLocker: ParcelLocker) => {
   try {
-    const data = await apiClient.post<ParcelLocker[]>(
+    const data = await apiClient.post<ParcelLocker>(
       parcelLockerUris.CREATE,
       parcelLocker,
     );
@@ -32,7 +32,7 @@ export const createParcelLocker = async (parcelLocker: ParcelLocker) => {
 export const updateParcelLocker = async (parcelLocker: ParcelLocker) => {
   try {
     const uri = `${parcelLockerUris.UPDATE}/${parcelLocker.id}`;
-    const data = await apiClient.put<ParcelLocker[]>(uri, parcelLocker);
+    const data = await apiClient.put<ParcelLocker>(uri, parcelLocker);
 
     return data.data;
   } catch (error) {
@@ -45,9 +45,7 @@ export const updateParcelLocker = async (parcelLocker: ParcelLocker) => {
 export const deleteParcelLocker = async (parcelLocker: ParcelLocker) => {
   try {
     const uri = `${parcelLockerUris.DELETE}/${parcelLocker.id}`;
-    const data = await apiClient.delete<ParcelLocker[]>(uri);
-
-    return data.data;
+    await apiClient.delete(uri);
   } catch (error) {
     console.error(error);
 

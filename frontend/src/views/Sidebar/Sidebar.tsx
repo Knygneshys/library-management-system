@@ -2,6 +2,8 @@ import { Box, Stack, Typography } from "@mui/material";
 import { primaryColor } from "../../constants/colorConstants";
 import { routes } from "../routes";
 import { Link } from "react-router";
+import { sidebarIconSize } from "../../constants/fontSizeConstants";
+import AllInboxOutlinedIcon from "@mui/icons-material/AllInboxOutlined";
 
 export default function Sidebar() {
   const fontSize = 22;
@@ -34,9 +36,19 @@ export default function Sidebar() {
                 </Stack>
               </Link>
             ))}
+            <Link
+                to={"/parcelLockers"}
+                style={{ textDecoration: "none", color: "black" }}
+              >
+                <Stack direction="row" sx={{ alignItems: "center", gap: 1 }}>
+                  <AllInboxOutlinedIcon sx={{ fontSize: sidebarIconSize }} />
+                  <Typography sx={{ fontSize: fontSize }}>Parcel Lockers</Typography>
+                </Stack>
+              </Link>
           </Stack>
         </Box>
       </Box>
     </Box>
   );
 }
+// <Route path="/parcelLockers" element={<ParcelLockerLayout />}>

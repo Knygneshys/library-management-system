@@ -10,6 +10,7 @@ import {
 import type { ParcelLocker } from "../../../../entities/ParcelLocker";
 import { tableHeaderFontSize } from "../../../../constants/fontSizeConstants";
 import { ParcelLockerState } from "../../../../entities/ParcelLockerState";
+import { Link } from "react-router";
 
 interface Props {
   parcelLockers: ParcelLocker[];
@@ -38,7 +39,7 @@ export default function ParcelLockerTable({
       <TableBody>
         {parcelLockers.map((parcelLocker, index) => (
           <TableRow key={index}>
-            <TableCell>{parcelLocker.address}</TableCell>
+            <TableCell><Link to={parcelLocker.id.toString()}>{parcelLocker.address}</Link></TableCell>
             <TableCell>{ParcelLockerState[parcelLocker.lockerState]}</TableCell>
             <TableCell>
               <Stack direction={"row"} spacing={2}>

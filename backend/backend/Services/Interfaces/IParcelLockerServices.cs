@@ -6,11 +6,11 @@ namespace backend.Services.Interfaces;
 
 public interface IParcelLockerServices
 {
-    Task<List<ParcelLocker>> CreateAsync(ParcelLockerCreateDto dto);
+    Task<ParcelLockerDto> CreateAsync(ParcelLockerCreateDto dto);
 
-    Task<List<ParcelLocker>> GetAllAsync();
+    Task<List<ParcelLockerDto>> GetAllAsync();
 
-    Task<List<ParcelLocker>> UpdateAsync(Guid id, ParcelLockerUpdateDto dto);
+    Task<ParcelLockerDto> UpdateAsync(Guid id, ParcelLockerUpdateDto dto);
 
-    Task<List<ParcelLocker>> DeleteAsync(Guid id);
+    void Delete(Guid id);
 }

@@ -5,6 +5,4 @@ namespace backend.Dtos.ParcelLocker;
 public class ParcelLockerCreateDto
 {
     public required string Address { get; set; }
-    
-    public required ParcelLockerState LockerState { get; set; }
 }

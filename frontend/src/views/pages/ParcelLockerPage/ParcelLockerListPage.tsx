@@ -2,10 +2,9 @@ import { Box, Button } from "@mui/material";
 import {
   createParcelLocker,
   deleteParcelLocker,
-  getAllParcelLockers,
   updateParcelLocker,
 } from "../../../external-api-clients/clients/externalParcelLockerApiClient";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import type { ParcelLocker } from "../../../entities/ParcelLocker";
 import ParcelLockerTable from "./ParcelLockerTable/ParcelLockerTable";
 import {
@@ -22,9 +21,10 @@ import {
 } from "../../../utils/toastUtils";
 import ParcelLockerUpdateDialog from "./ParcelLockerUpdateDialog/ParcelLockerUpdateDialog";
 import ParcelLockerDeletionDialog from "./ParcelLockerDeletionDialog/ParcelLockerDeletionDialog";
+import { useParcelLockers } from "../../../hooks/useParcelLockers";
 
-export default function ParcelLockerPage() {
-  const [parcelLockers, setParcelLockers] = useState<ParcelLocker[]>([]);
+export default function ParcelLockerListPage() {
+  const { parcelLockers, setParcelLockers } = useParcelLockers();
 
   const [creationDialogIsOpen, setCreationDialogIsOpen] =
     useState<boolean>(false);
@@ -36,16 +36,6 @@ export default function ParcelLockerPage() {
   const [parcelLockerThatIsBeingDeleted, setParcelLockerThatIsBeingDeleted] =
     useState<ParcelLocker | null>(null);
 
-  useEffect(() => {
-    const fetchParcelLockers = async () => {
-      const data = await getAllParcelLockers();
-
-      setParcelLockers(data);
-    };
-
-    fetchParcelLockers();
-  }, []);
-
   const handleCreationDialogOpen = () => {
     setCreationDialogIsOpen(true);
   };
@@ -56,9 +46,8 @@ export default function ParcelLockerPage() {
 
   const handleCreationFormSubmit = async (parcelLocker: ParcelLocker) => {
     try {
-      const parcelLockers = await createParcelLocker(parcelLocker);
-
-      setParcelLockers(parcelLockers);
+      const newParcelLocker = await createParcelLocker(parcelLocker);
+      setParcelLockers((prev) => [...prev, newParcelLocker] as ParcelLocker[]);
       toast.success(successfullCreateMessage("Parcel Locker"));
     } catch (error) {
       handleErrorToast(error);
@@ -79,9 +68,13 @@ export default function ParcelLockerPage() {
 
   const handleUpdateFormSubmit = async (parcelLocker: ParcelLocker) => {
     try {
-      const parcelLockers = await updateParcelLocker(parcelLocker);
-
-      setParcelLockers(parcelLockers);
+      const updatedParcelLocker = await updateParcelLocker(parcelLocker);
+      setParcelLockers(
+        (prev) =>
+          prev.map((pl) =>
+            pl.id === updatedParcelLocker.id ? updatedParcelLocker : pl,
+          ) as ParcelLocker[],
+      );
       toast.success(successfullUpdateMessage("Parcel Locker"));
     } catch (error) {
       handleErrorToast(error);
@@ -102,8 +95,10 @@ export default function ParcelLockerPage() {
 
   const handleParcelLockerDelete = async (parcelLocker: ParcelLocker) => {
     try {
-      const parcelLockers = await deleteParcelLocker(parcelLocker);
-      setParcelLockers(parcelLockers);
+      await deleteParcelLocker(parcelLocker);
+      setParcelLockers((prev) =>
+        prev.filter((pl) => pl.id !== parcelLocker.id),
+      );
       toast.success(successfullDeleteMessage("Parcel Locker"));
     } catch (error) {
       handleErrorToast(error);
