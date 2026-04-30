@@ -50,7 +50,7 @@ export default function LockerList({ parcelLocker }: ParcelListProps) {
     };
 
     fetchLockers();
-  }, []);
+  });
 
   const handleCreationDialogOpen = () => {
     setCreationDialogIsOpen(true);

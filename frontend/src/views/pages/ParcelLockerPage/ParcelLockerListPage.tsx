@@ -47,7 +47,7 @@ export default function ParcelLockerListPage() {
   const handleCreationFormSubmit = async (parcelLocker: ParcelLocker) => {
     try {
       const newParcelLocker = await createParcelLocker(parcelLocker);
-      setParcelLockers((prev) => [...prev, newParcelLocker]);
+      setParcelLockers((prev) => [...prev, newParcelLocker] as ParcelLocker[]);
       toast.success(successfullCreateMessage("Parcel Locker"));
     } catch (error) {
       handleErrorToast(error);
@@ -69,10 +69,11 @@ export default function ParcelLockerListPage() {
   const handleUpdateFormSubmit = async (parcelLocker: ParcelLocker) => {
     try {
       const updatedParcelLocker = await updateParcelLocker(parcelLocker);
-      setParcelLockers((prev) =>
-        prev.map((pl) =>
-          pl.id === updatedParcelLocker.id ? updatedParcelLocker : pl,
-        ),
+      setParcelLockers(
+        (prev) =>
+          prev.map((pl) =>
+            pl.id === updatedParcelLocker.id ? updatedParcelLocker : pl,
+          ) as ParcelLocker[],
       );
       toast.success(successfullUpdateMessage("Parcel Locker"));
     } catch (error) {

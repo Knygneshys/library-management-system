@@ -1,5 +1,4 @@
 import { useParams } from "react-router";
-import { useParcelLockers } from "../../layout/ParcelLockerLayout";
 
 import {
   Container,
@@ -8,18 +7,17 @@ import {
   Typography,
   Stack,
   Chip,
-  Divider
+  Divider,
 } from "@mui/material";
 import { ParcelLockerState } from "../../../entities/ParcelLockerState";
 import LockerList from "./LockerList";
+import { useParcelLockers } from "../../../hooks/useParcelLockers";
 
 const ParcelLockerPage = () => {
   const { id } = useParams();
   const { parcelLockers } = useParcelLockers();
 
-  const parcelLocker = parcelLockers.find(
-    pl => pl.id.toString() === id
-  );
+  const parcelLocker = parcelLockers.find((pl) => pl.id.toString() === id);
 
   if (!parcelLocker) {
     return (
@@ -34,27 +32,30 @@ const ParcelLockerPage = () => {
       <Card elevation={3} sx={{ borderRadius: 3 }}>
         <CardContent>
           <Stack spacing={2} useFlexGap={true}>
-            <Typography variant="h4" sx={{ fontWeight: 600 }} >
+            <Typography variant="h4" sx={{ fontWeight: 600 }}>
               Parcel Locker
             </Typography>
 
             <Divider />
 
-            <Stack spacing={2} direction={"row"} useFlexGap={true} sx={{justifyContent: "space-between", alignItems: "flex-end",}}>
+            <Stack
+              spacing={2}
+              direction={"row"}
+              useFlexGap={true}
+              sx={{ justifyContent: "space-between", alignItems: "flex-end" }}
+            >
               <div>
                 <Typography variant="subtitle2" color="text.secondary">
                   Address
                 </Typography>
-                <Typography variant="body1">
-                  {parcelLocker.address}
-                </Typography>
+                <Typography variant="body1">{parcelLocker.address}</Typography>
               </div>
-              <Chip label={ParcelLockerState[parcelLocker.lockerState]}/>
+              <Chip label={ParcelLockerState[parcelLocker.lockerState]} />
             </Stack>
 
             <Divider />
-            
-            <LockerList parcelLocker={parcelLocker}/>
+
+            <LockerList parcelLocker={parcelLocker} />
           </Stack>
         </CardContent>
       </Card>
