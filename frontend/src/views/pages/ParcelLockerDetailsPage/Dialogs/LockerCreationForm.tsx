@@ -1,21 +1,23 @@
 import { Form, Formik } from "formik";
 import type { Locker } from "../../../../entities/Locker";
 import LockerCreationFormContent from "./LockerCreationFormContent";
-import { parcelLockerCreationValidation } from "../../../../validation/parcelLocker/parcelLockerCreationValidation";
+import { lockerCreationValidation } from "../../../../validation/locker/lockerCreationValidation";
 
-export type LockerCreationFormContent = Omit<Locker, "id" | "parcelLockerId" | "lockerState">
+export type LockerCreationFormContent = Omit<
+  Locker,
+  "id" | "parcelLockerId" | "lockerState"
+>;
 
 interface Props {
   onSubmit: (locker: LockerCreationFormContent) => void;
 }
-
 
 export default function LockerCreationForm({ onSubmit }: Props) {
   const initialValues: LockerCreationFormContent = {
     locationCode: "",
     height: 0,
     width: 0,
-    length: 0
+    length: 0,
   };
 
   const handleFormSubmit = (values: LockerCreationFormContent) => {
@@ -23,7 +25,7 @@ export default function LockerCreationForm({ onSubmit }: Props) {
       locationCode: values.locationCode,
       height: values.height,
       width: values.width,
-      length: values.length
+      length: values.length,
     };
 
     onSubmit(locker);
@@ -33,7 +35,7 @@ export default function LockerCreationForm({ onSubmit }: Props) {
     <Formik
       initialValues={initialValues}
       onSubmit={handleFormSubmit}
-      validationSchema={parcelLockerCreationValidation}
+      validationSchema={lockerCreationValidation}
     >
       <Form>
         <LockerCreationFormContent />

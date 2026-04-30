@@ -8,5 +8,4 @@ public class LockerCreateDto
     public required double Height { get; set; } 
     public required double Width { get; set; }
     public required double Length { get; set; }
-    public required Guid ParcelLockerId { get; set; }
 }

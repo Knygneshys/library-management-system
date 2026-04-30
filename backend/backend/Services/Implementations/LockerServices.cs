@@ -11,40 +11,45 @@ public class LockerServices(LibraryDbContext dbContext) : ILockerServices
 {
     
     private const string EntityName = "Locker";
-    public async Task<LockerDto> CreateAsync(LockerCreateDto dto)
+    
+    public async Task<LockerDto> CreateAsync(Guid parcelLockerId, LockerCreateDto dto)
     {
-        var LockerInDb = await dbContext.Lockers.FirstOrDefaultAsync(p => p.LocationCode.ToLower().Equals(dto.LocationCode.ToLower()));
-        if (LockerInDb is not null)
+        var lockerInDb = await dbContext.Lockers.FirstOrDefaultAsync(p => p.LocationCode.ToLower().Equals(dto.LocationCode.ToLower()));
+        if (lockerInDb is not null)
         {
             throw new LockerByLocationCodeAlreadyExists(dto.LocationCode);
         }
 
-        var ParcelLockerInDb = await dbContext.ParcelLockers.FirstOrDefaultAsync(p => p.Id.Equals(dto.ParcelLockerId))
-            ?? throw new ParcelLockerByIdDoesNotExists(dto.ParcelLockerId);
+        var parcelLockerInDb = await dbContext.ParcelLockers.FirstOrDefaultAsync(p => p.Id.Equals(parcelLockerId));
+        
+        if(parcelLockerInDb is null)
+        {
+            throw new EntityNotFoundException("Parcel locker");
+        }
 
-        var Locker = new Locker()
+        var locker = new Locker()
         {
             Id = Guid.NewGuid(),
             Height = dto.Height,
             Length = dto.Length,
             Width = dto.Width,
             LocationCode = dto.LocationCode,
-            ParcelLockerId = dto.ParcelLockerId,
-            ParcelLocker = ParcelLockerInDb,
+            ParcelLockerId = parcelLockerId,
+            ParcelLocker = parcelLockerInDb,
             LockerState = LockerState.Empty,
         };
 
-        await dbContext.Lockers.AddAsync(Locker);
+        await dbContext.Lockers.AddAsync(locker);
         await dbContext.SaveChangesAsync();
 
         return new LockerDto{
-            Id = Locker.Id,
-            LocationCode = Locker.LocationCode,
-            Height = Locker.Height,
-            Length = Locker.Length,
-            Width = Locker.Width,
-            LockerState = Locker.LockerState,
-            ParcelLockerId = Locker.ParcelLockerId,
+            Id = locker.Id,
+            LocationCode = locker.LocationCode,
+            Height = locker.Height,
+            Length = locker.Length,
+            Width = locker.Width,
+            LockerState = locker.LockerState,
+            ParcelLockerId = locker.ParcelLockerId,
         };
     }
 

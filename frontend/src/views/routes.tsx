@@ -29,5 +29,5 @@ export const routes = [
     component: PrintingHousePage,
     name: "Printing Houses",
     icon: <HomeIcon sx={{ fontSize: sidebarIconSize }} />,
-  }
+  },
 ];

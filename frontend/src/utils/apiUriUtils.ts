@@ -26,4 +26,3 @@ export const printingHouseUris = {
   UPDATE: "PrintingHouse",
   DELETE: "PrintingHouse",
 };
-

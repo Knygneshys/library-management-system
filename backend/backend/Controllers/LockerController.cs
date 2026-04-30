@@ -6,16 +6,16 @@ namespace backend.Controllers;
 
 [Route("api/[controller]")]
 [ApiController]
-public class LockerController(ILockerServices LockerServices) : ControllerBase
+public class LockerController(ILockerServices lockerServices) : ControllerBase
 {
-    [HttpPost]
-    public async Task<IActionResult> CreateLocker([FromBody] LockerCreateDto dto)
+    [HttpPost("{parelLockerId:guid}")]
+    public async Task<IActionResult> CreateLocker([FromRoute] Guid parelLockerId, [FromBody] LockerCreateDto dto)
     {
         try
         {
-            var LockerId = await LockerServices.CreateAsync(dto);
+            var lockerId = await lockerServices.CreateAsync(parelLockerId, dto);
 
-            return Ok(LockerId);
+            return Ok(lockerId);
         }
         catch(Exception ex)
         {
@@ -26,7 +26,7 @@ public class LockerController(ILockerServices LockerServices) : ControllerBase
     [HttpGet]
     public async Task<IActionResult> GetAllLockers()
     {
-        var Lockers = await LockerServices.GetAllAsync();
+        var Lockers = await lockerServices.GetAllAsync();
         
         return Ok(Lockers);
     }
@@ -34,7 +34,7 @@ public class LockerController(ILockerServices LockerServices) : ControllerBase
     [HttpGet("{parcelLockerId:guid}")]
     public async Task<IActionResult> GetLockersByParcelLocker(Guid parcelLockerId)
     {
-        var Lockers = await LockerServices.GetLockersByParcelLockerAsync(parcelLockerId);
+        var Lockers = await lockerServices.GetLockersByParcelLockerAsync(parcelLockerId);
         
         return Ok(Lockers);
     }
@@ -44,7 +44,7 @@ public class LockerController(ILockerServices LockerServices) : ControllerBase
     {
         try
         {
-            var Lockers = await LockerServices.UpdateAsync(id, dto);
+            var Lockers = await lockerServices.UpdateAsync(id, dto);
 
             return Ok(Lockers);
         }
@@ -59,7 +59,7 @@ public class LockerController(ILockerServices LockerServices) : ControllerBase
     {
         try
         {
-            LockerServices.Delete(id);
+            lockerServices.Delete(id);
 
             return NoContent();
         }

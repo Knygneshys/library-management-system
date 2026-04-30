@@ -21,10 +21,10 @@ import {
 } from "../../../utils/toastUtils";
 import ParcelLockerUpdateDialog from "./ParcelLockerUpdateDialog/ParcelLockerUpdateDialog";
 import ParcelLockerDeletionDialog from "./ParcelLockerDeletionDialog/ParcelLockerDeletionDialog";
-import { useParcelLockers } from "../../layout/ParcelLockerLayout";
+import { useParcelLockers } from "../../../hooks/useParcelLockers";
 
 export default function ParcelLockerListPage() {
-  const { parcelLockers, setParcelLockers } = useParcelLockers()
+  const { parcelLockers, setParcelLockers } = useParcelLockers();
 
   const [creationDialogIsOpen, setCreationDialogIsOpen] =
     useState<boolean>(false);
@@ -47,7 +47,7 @@ export default function ParcelLockerListPage() {
   const handleCreationFormSubmit = async (parcelLocker: ParcelLocker) => {
     try {
       const newParcelLocker = await createParcelLocker(parcelLocker);
-      setParcelLockers(prev => [...prev, newParcelLocker]);
+      setParcelLockers((prev) => [...prev, newParcelLocker]);
       toast.success(successfullCreateMessage("Parcel Locker"));
     } catch (error) {
       handleErrorToast(error);
@@ -69,7 +69,11 @@ export default function ParcelLockerListPage() {
   const handleUpdateFormSubmit = async (parcelLocker: ParcelLocker) => {
     try {
       const updatedParcelLocker = await updateParcelLocker(parcelLocker);
-      setParcelLockers(prev => prev.map(pl => pl.id === updatedParcelLocker.id ? updatedParcelLocker : pl));
+      setParcelLockers((prev) =>
+        prev.map((pl) =>
+          pl.id === updatedParcelLocker.id ? updatedParcelLocker : pl,
+        ),
+      );
       toast.success(successfullUpdateMessage("Parcel Locker"));
     } catch (error) {
       handleErrorToast(error);
@@ -91,14 +95,15 @@ export default function ParcelLockerListPage() {
   const handleParcelLockerDelete = async (parcelLocker: ParcelLocker) => {
     try {
       await deleteParcelLocker(parcelLocker);
-      setParcelLockers(prev => prev.filter(pl => pl.id !== parcelLocker.id));
+      setParcelLockers((prev) =>
+        prev.filter((pl) => pl.id !== parcelLocker.id),
+      );
       toast.success(successfullDeleteMessage("Parcel Locker"));
     } catch (error) {
       handleErrorToast(error);
     }
     handleDeletionDialogClose();
   };
-
 
   return (
     <Box>

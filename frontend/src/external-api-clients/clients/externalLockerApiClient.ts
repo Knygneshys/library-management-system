@@ -1,8 +1,9 @@
 import { apiClient } from "../apiClient";
-import { lockerUris } from "../../utils/apiUriUtils";
 import type { Locker } from "../../entities/Locker";
 import type { ParcelLocker } from "../../entities/ParcelLocker";
 import type { LockerCreationFormContent } from "../../views/pages/ParcelLockerDetailsPage/Dialogs/LockerCreationForm";
+import type { Guid } from "guid-typescript";
+import { lockerUris } from "../../utils/apiUriUtils";
 
 export const getAllLockers = async () => {
   try {
@@ -18,7 +19,9 @@ export const getAllLockers = async () => {
 
 export const getLockersByParcelLocker = async (parcelLocker: ParcelLocker) => {
   try {
-    const data = await apiClient.get<Locker[]>(`${lockerUris.GET_BY_PARCEL_LOCKER}/${parcelLocker.id}`);
+    const data = await apiClient.get<Locker[]>(
+      `${lockerUris.GET_BY_PARCEL_LOCKER}/${parcelLocker.id}`,
+    );
 
     return data.data;
   } catch (error) {
@@ -28,12 +31,13 @@ export const getLockersByParcelLocker = async (parcelLocker: ParcelLocker) => {
   }
 };
 
-export const createLocker = async (locker: LockerCreationFormContent) => {
+export const createLocker = async (
+  parcelLockerId: Guid,
+  locker: LockerCreationFormContent,
+) => {
   try {
-    const data = await apiClient.post<Locker>(
-      lockerUris.CREATE,
-      locker,
-    );
+    const uri = `${lockerUris.CREATE}/${parcelLockerId}`;
+    const data = await apiClient.post<Locker>(uri, locker);
 
     return data.data;
   } catch (error) {
