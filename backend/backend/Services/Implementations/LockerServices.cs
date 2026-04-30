@@ -64,6 +64,23 @@ public class LockerServices(LibraryDbContext dbContext) : ILockerServices
         .ToListAsync();
     }
 
+    public async Task<List<LockerDto>> GetLockersByParcelLockerAsync(Guid parcelLockerId)
+    {
+        return await dbContext.Lockers
+        .Where(l => l.ParcelLockerId.Equals(parcelLockerId))
+        .Select(l => new LockerDto
+        {
+            Id = l.Id,
+            LocationCode = l.LocationCode,
+            Height = l.Height,
+            Width = l.Width,
+            Length = l.Length,
+            LockerState = l.LockerState,
+            ParcelLockerId = l.ParcelLockerId,
+        })
+        .ToListAsync();
+    }
+
     public async Task<LockerDto> UpdateAsync(Guid id, LockerUpdateDto dto)
     {
         var Locker = await dbContext.Lockers.FirstOrDefaultAsync(p => p.Id.Equals(id)) 

@@ -8,6 +8,8 @@ public interface ILockerServices
 
     Task<List<LockerDto>> GetAllAsync();
 
+    Task<List<LockerDto>> GetLockersByParcelLockerAsync(Guid parcelLocker);
+
     Task<LockerDto> UpdateAsync(Guid id, LockerUpdateDto dto);
 
     void Delete(Guid id);

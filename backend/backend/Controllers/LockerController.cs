@@ -31,6 +31,14 @@ public class LockerController(ILockerServices LockerServices) : ControllerBase
         return Ok(Lockers);
     }
 
+    [HttpGet("{parcelLockerId:guid}")]
+    public async Task<IActionResult> GetLockersByParcelLocker(Guid parcelLockerId)
+    {
+        var Lockers = await LockerServices.GetLockersByParcelLockerAsync(parcelLockerId);
+        
+        return Ok(Lockers);
+    }
+
     [HttpPut("{id:guid}")]
     public async Task<IActionResult> UpdateLocker(Guid id, [FromBody] LockerUpdateDto dto)
     {

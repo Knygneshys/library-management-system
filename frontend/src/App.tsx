@@ -4,6 +4,9 @@ import { Route, Routes } from "react-router";
 import { secondaryColor } from "./constants/colorConstants";
 import { routes } from "./views/routes";
 import "./style/global.css";
+import ParcelLockerPage from "./views/pages/ParcelLockerDetailsPage/ParcelLockerDetailsPage";
+import ParcelLockerListPage from "./views/pages/ParcelLockerPage/ParcelLockerListPage";
+import { ParcelLockerLayout } from "./views/layout/ParcelLockerLayout";
 
 export default function App() {
   return (
@@ -16,9 +19,13 @@ export default function App() {
               <Route
                 key={route.name}
                 path={route.route}
-                element={route.component()}
+                element={<route.component />}
               />
             ))}
+            <Route path="/parcelLockers" element={<ParcelLockerLayout />}>
+              <Route index element={<ParcelLockerListPage />} />
+              <Route path=":id" element={<ParcelLockerPage />} />
+            </Route>
           </Routes>
         </Box>
       </Box>

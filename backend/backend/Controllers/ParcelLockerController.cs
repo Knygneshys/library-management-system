@@ -25,11 +25,11 @@ public class ParcelLockerController(IParcelLockerServices parcelLockerServices) 
     }
 
     [HttpGet]
-    public async Task<IActionResult> GetAllParcelLockers()
+    public async Task<IActionResult> GetParcelLockers()
     {
-        var parcelLocker = await parcelLockerServices.GetAllAsync();
+        var parcelLockers = await parcelLockerServices.GetAllAsync();
         
-        return Ok(parcelLocker);
+        return Ok(parcelLockers);
     }
 
     [HttpPut("{id:guid}")]
