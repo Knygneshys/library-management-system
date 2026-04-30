@@ -2,6 +2,7 @@ import { apiClient } from "../apiClient";
 import { lockerUris } from "../../utils/apiUriUtils";
 import type { Locker } from "../../entities/Locker";
 import type { ParcelLocker } from "../../entities/ParcelLocker";
+import type { LockerCreationFormContent } from "../../views/pages/ParcelLockerDetailsPage/Dialogs/LockerCreationForm";
 
 export const getAllLockers = async () => {
   try {
@@ -27,7 +28,7 @@ export const getLockersByParcelLocker = async (parcelLocker: ParcelLocker) => {
   }
 };
 
-export const createLocker = async (locker: Locker) => {
+export const createLocker = async (locker: LockerCreationFormContent) => {
   try {
     const data = await apiClient.post<Locker>(
       lockerUris.CREATE,

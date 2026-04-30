@@ -2,10 +2,8 @@ import { sidebarIconSize } from "../constants/fontSizeConstants";
 import AuthorPage from "./pages/AuthorPage/AuthorPage";
 import PrintingHousePage from "./pages/PrintingHousePage/PrintingHousePage";
 import HomePage from "./pages/HomePage/HomePage";
-import ParcelLockerPage from "./pages/ParcelLockerPage/ParcelLockerListPage";
 import HistoryEduIcon from "@mui/icons-material/HistoryEdu";
 import HomeIcon from "@mui/icons-material/Home";
-import AllInboxOutlinedIcon from "@mui/icons-material/AllInboxOutlined";
 
 export const routes = [
   {

@@ -1,16 +1,7 @@
 import { Box, Button, Stack } from "@mui/material";
-import {
-  createParcelLocker,
-  deleteParcelLocker,
-  getAllParcelLockers,
-  updateParcelLocker,
-} from "../../../external-api-clients/clients/externalParcelLockerApiClient";
 import { useEffect, useState } from "react";
 import type { ParcelLocker } from "../../../entities/ParcelLocker";
-import {
-  primaryColor,
-  secondaryColor,
-} from "../../../constants/colorConstants";
+import { primaryColor, secondaryColor } from "../../../constants/colorConstants";
 import toast from "react-hot-toast";
 import {
   handleErrorToast,
@@ -18,8 +9,7 @@ import {
   successfullDeleteMessage,
   successfullUpdateMessage,
 } from "../../../utils/toastUtils";
-import { useNavigate } from "react-router";
-import { createLocker, getLockersByParcelLocker, updateLocker } from "../../../external-api-clients/clients/externalLockerApiClient";
+import { createLocker, deleteLocker, getLockersByParcelLocker, updateLocker } from "../../../external-api-clients/clients/externalLockerApiClient";
 import type { Locker } from "../../../entities/Locker";
 import {LockerTable} from "./LockerTable";
 import LockerCreationDialog from "./Dialogs/LockerCreationDialog";
@@ -104,8 +94,8 @@ export default function LockerList({parcelLocker}: ParcelListProps) {
 
   const handleLockerDelete = async (locker: Locker) => {
     try {
-      await deleteParcelLocker(parcelLocker);
-      setLockers(prev => prev.filter(pl => pl.id !== parcelLocker.id));
+      await deleteLocker(locker);
+      setLockers(prev => prev.filter(pl => pl.id !== locker.id));
       toast.success(successfullDeleteMessage("Locker"));
     } catch (error) {
       handleErrorToast(error);

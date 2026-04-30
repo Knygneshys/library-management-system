@@ -1,6 +1,5 @@
 import { Form, Formik } from "formik";
 import type { Locker, LockerUpdateDto } from "../../../../entities/Locker";
-import type { LockerState } from "../../../../entities/LockerState";
 import LockerUpdateFormContent from "./LockerUpdateFormContent";
 import { lockerUpdateValidation } from "../../../../validation/locker/lockerUpdateValidation";
 

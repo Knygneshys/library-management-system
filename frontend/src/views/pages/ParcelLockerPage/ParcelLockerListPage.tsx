@@ -2,10 +2,9 @@ import { Box, Button } from "@mui/material";
 import {
   createParcelLocker,
   deleteParcelLocker,
-  getAllParcelLockers,
   updateParcelLocker,
 } from "../../../external-api-clients/clients/externalParcelLockerApiClient";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import type { ParcelLocker } from "../../../entities/ParcelLocker";
 import ParcelLockerTable from "./ParcelLockerTable/ParcelLockerTable";
 import {
@@ -22,13 +21,10 @@ import {
 } from "../../../utils/toastUtils";
 import ParcelLockerUpdateDialog from "./ParcelLockerUpdateDialog/ParcelLockerUpdateDialog";
 import ParcelLockerDeletionDialog from "./ParcelLockerDeletionDialog/ParcelLockerDeletionDialog";
-import { Route, Routes, useNavigate } from "react-router";
-import ParcelLockerDetailsPage from "../ParcelLockerDetailsPage/ParcelLockerDetailsPage";
 import { useParcelLockers } from "../../layout/ParcelLockerLayout";
 
 export default function ParcelLockerListPage() {
   const { parcelLockers, setParcelLockers } = useParcelLockers()
-  const navigate = useNavigate();
 
   const [creationDialogIsOpen, setCreationDialogIsOpen] =
     useState<boolean>(false);
