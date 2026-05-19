@@ -1,5 +1,6 @@
 using backend.Data;
 using backend.Dtos.Locker;
+using backend.Enums;
 using backend.Exceptions;
 using backend.Models;
 using backend.Services.Interfaces;
@@ -128,4 +129,117 @@ public class LockerServices(LibraryDbContext dbContext) : ILockerServices
 
         await dbContext.SaveChangesAsync();
     }
+
+    public async Task<LockerDto?> GetLockerByCodeAsync(string pinCode)
+    {
+        var locker = await dbContext.Lockers
+            .Include(l => l.IssueCompartment)
+            .FirstOrDefaultAsync(l => l.IssueCompartment != null &&
+                (l.IssueCompartment.PinCodeReader == pinCode ||
+                 l.IssueCompartment.PinCodeLibrarian == pinCode));
+
+        if (locker == null)
+        {
+            return null; 
+        }
+
+        return new LockerDto
+        {
+            Id = locker.Id,
+            LocationCode = locker.LocationCode,
+            Height = locker.Height,
+            Length = locker.Length,
+            Width = locker.Width,
+            LockerState = locker.LockerState,
+            ParcelLockerId = locker.ParcelLockerId
+        };
+    }
+    public async Task OpenLockerAsync(Guid id)
+    {
+        var locker = await dbContext.Lockers.FirstOrDefaultAsync(l => l.Id == id)
+            ?? throw new EntityNotFoundException(EntityName);
+
+        locker.IsDoorClosed = false;
+
+        await dbContext.SaveChangesAsync();
+    }
+
+    public async Task<bool> IsLockerClosedAsync(Guid id)
+    {
+        var locker = await dbContext.Lockers.FirstOrDefaultAsync(l => l.Id == id)
+            ?? throw new EntityNotFoundException(EntityName);
+        return locker.IsDoorClosed;
+    }
+
+    public async Task HandleLockerClosedAsync(Guid id)
+    {
+        var locker = await dbContext.Lockers.FirstOrDefaultAsync(l => l.Id == id)
+            ?? throw new EntityNotFoundException(EntityName);
+
+        locker.IsDoorClosed = true;
+
+        await dbContext.SaveChangesAsync();
+    }
+
+
+
+    public async Task ResetLockerAsync(Guid lockerId, string pinCode)
+    {
+        var locker = await dbContext.Lockers
+            .Include(l => l.IssueCompartment)
+            .FirstOrDefaultAsync(l => l.Id == lockerId)
+            ?? throw new EntityNotFoundException(EntityName);
+
+        locker.ResetLockerState();
+        dbContext.Lockers.Update(locker);
+
+        var issueCompartment = IssueCompartment.GetByLocker(locker);
+
+        if (issueCompartment.PinCodeReader == pinCode)
+        {
+            var reservation = await dbContext.Reservations
+                .FirstOrDefaultAsync(r => r.IssueCompartmentId == issueCompartment.Id);
+
+            if (reservation != null)
+            {
+                reservation.UpdateReservation();
+                dbContext.Reservations.Update(reservation);
+                // create loan
+                var loan = Loan.Create(reservation);
+                await dbContext.Loans.AddAsync(loan);
+            }
+        }
+        else if (issueCompartment.PinCodeLibrarian == pinCode)
+        {
+            var reservation = await dbContext.Reservations
+                .Include(r => r.LibraryTasks)
+                .FirstOrDefaultAsync(r => r.IssueCompartmentId == issueCompartment.Id);
+
+            if (reservation != null && reservation.CopyId.HasValue)
+            {
+                var copy = await dbContext.Copies.FindAsync(reservation.CopyId.Value);
+                if (copy != null)
+                {
+                    // pazymeti egzemplioriu kaip laisva
+                    copy.UpdateStatus();
+                    dbContext.Copies.Update(copy);
+                }
+
+                // pazymeti is_done true
+                var task = reservation.LibraryTasks.FirstOrDefault(t => t.IsIssueTask == false && t.IsDone == false);
+                if (task != null)
+                {
+                    task.UpdateTask();
+                }
+            }
+        }
+        else
+        {
+            throw new Exception("Neteisingas PIN kodas. Operacija negalima.");
+        }
+
+        dbContext.IssueCompartments.Remove(issueCompartment);
+        await dbContext.SaveChangesAsync();
+    }
+
 }

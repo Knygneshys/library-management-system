@@ -13,4 +13,14 @@ public interface ILockerServices
     Task<LockerDto> UpdateAsync(Guid id, LockerUpdateDto dto);
 
     void Delete(Guid id);
+
+
+
+
+    Task<LockerDto?> GetLockerByCodeAsync(string pinCode);
+    Task OpenLockerAsync(Guid id);
+
+    Task<bool> IsLockerClosedAsync(Guid id);
+    Task HandleLockerClosedAsync(Guid id);
+    Task ResetLockerAsync(Guid lockerId, string pinCode);
 }

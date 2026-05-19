@@ -1,7 +1,8 @@
 using backend.Data;
-using backend.Models;
 using backend.Enums;
+using backend.Models;
 using Microsoft.EntityFrameworkCore;
+using System.Net.Sockets;
 
 namespace backend.Data.Seeding.Seeders;
 
@@ -12,9 +13,24 @@ public class ReservationSeeder : ISeeder
         if (await context.Reservations.AnyAsync()) return;
 
         var books = await context.Books.Take(3).ToListAsync();
-        if (!books.Any()) return;
+
+        var locker = await context.Lockers.FirstOrDefaultAsync();
+        if (!books.Any() || locker == null) return;
 
         var now = DateTime.UtcNow;
+
+        var copy = await context.Copies.FirstOrDefaultAsync(c => c.BookId == books[0].Id);
+        if (copy == null) return;
+
+        var compartment = new IssueCompartment
+        {
+            Id = Guid.NewGuid(),
+            LockerId = locker.Id,
+            InsertionDate = DateTime.UtcNow,
+            PinCodeReader = "1234",
+            PinCodeLibrarian = "9999"
+        };
+        context.IssueCompartments.Add(compartment);
 
         var reservations = new List<Reservation>
         {
@@ -23,6 +39,8 @@ public class ReservationSeeder : ISeeder
                 Id = Guid.NewGuid(),
                 CreatedAt = now.AddDays(-3),
                 BookId = books[0].Id,
+                CopyId = copy.Id,
+                IssueCompartmentId = compartment.Id, // knyga atsiemimui
                 DueDate = now.AddDays(5), 
                 IsExtended = false,
                 WantsToReturn = false,
@@ -51,6 +69,13 @@ public class ReservationSeeder : ISeeder
         };
 
         context.Reservations.AddRange(reservations);
+
+        copy.IsTaken = true;
+        context.Copies.Update(copy);
+
+        locker.LockerState = LockerState.Occupied;
+        context.Lockers.Update(locker);
+
         await context.SaveChangesAsync();
     }
 }
