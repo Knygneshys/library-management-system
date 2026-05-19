@@ -4,6 +4,8 @@ import PrintingHousePage from "./pages/PrintingHousePage/PrintingHousePage";
 import HomePage from "./pages/HomePage/HomePage";
 import HistoryEduIcon from "@mui/icons-material/HistoryEdu";
 import HomeIcon from "@mui/icons-material/Home";
+import BookPage from "./pages/BookPage/BookPage";
+import BookIcon from "@mui/icons-material/Book";
 
 export const routes = [
   {
@@ -29,5 +31,11 @@ export const routes = [
     component: PrintingHousePage,
     name: "Printing Houses",
     icon: <HomeIcon sx={{ fontSize: sidebarIconSize }} />,
+  },
+  {
+    route: "/books",
+    component: BookPage,
+    name: "Books",
+    icon: <BookIcon sx={{ fontSize: sidebarIconSize }} />,
   },
 ];
