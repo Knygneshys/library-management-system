@@ -26,3 +26,10 @@ export const printingHouseUris = {
   UPDATE: "PrintingHouse",
   DELETE: "PrintingHouse",
 };
+
+export const bookUris = {
+  GET_ALL: "Book",
+  CREATE: "Book",
+  UPDATE: "Book",
+  DELETE: "Book",
+};
