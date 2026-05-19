@@ -10,6 +10,8 @@ public class LibraryDbContext(DbContextOptions<LibraryDbContext> options) : DbCo
     public DbSet<Locker> Lockers { get; set; }
     public DbSet<Book> Books { get; set; }
     public DbSet<PrintingHouse> PrintingHouses { get; set; }
+    public DbSet<Genre> Genres { get; set; }
+    public DbSet<Publisher> Publishers { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -41,9 +43,33 @@ public class LibraryDbContext(DbContextOptions<LibraryDbContext> options) : DbCo
                 .HasForeignKey(b => b.AuthorId)
                 .IsRequired();
 
+        modelBuilder.Entity<Book>()
+                .HasOne(b => b.PrintingHouse)
+                .WithMany(ph => ph.Books)
+                .HasForeignKey(b => b.PrintingHouseId)
+                .IsRequired();
+
+        modelBuilder.Entity<Book>()
+                .HasOne(b => b.Publisher)
+                .WithMany(p => p.Books)
+                .HasForeignKey(b => b.PublisherId)
+                .IsRequired();
+
         modelBuilder.Entity<PrintingHouse>()
                 .HasIndex(a => a.Name)
                 .IsUnique();
 
+        modelBuilder.Entity<Genre>()
+                .HasIndex(g => g.Title)
+                .IsUnique();
+
+        modelBuilder.Entity<Publisher>()
+                .HasIndex(p => p.Name)
+                .IsUnique();
+
+        modelBuilder.Entity<Book>()
+                .HasMany(b => b.Genres)
+                .WithMany(g => g.Books)
+                .UsingEntity(join => join.ToTable("BookGenres"));
     }
 }

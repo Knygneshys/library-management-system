@@ -21,4 +21,10 @@ public class Book
     public Guid PrintingHouseId { get; set; }
 
     public PrintingHouse PrintingHouse { get; set; }
+    
+    public ICollection<Genre> Genres { get; set; }
+    
+    public Guid PublisherId { get; set; }
+    
+    public Publisher Publisher { get; set; }
 }
