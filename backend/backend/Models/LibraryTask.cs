@@ -7,5 +7,9 @@
         public bool IsDone { get; set; }
         public Guid ReservationId { get; set; }
         public Reservation Reservation { get; set; } = null!;
+        public void UpdateTask()
+        {
+            IsDone = true;
+        }
     }
 }

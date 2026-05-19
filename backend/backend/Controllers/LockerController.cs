@@ -70,29 +70,19 @@ public class LockerController(ILockerServices lockerServices) : ControllerBase
     }
 
 
-
-
-
-
     [HttpPost("submit-pin")]
     public async Task<IActionResult> SubmitPINInput([FromBody] LockerSubmitPINDto dto)
     {
         try
         {
-            //  getLockerByCode()
             var locker = await lockerServices.GetLockerByCodeAsync(dto.PinCode);
 
-            // [Locker exists]
             if (locker != null)
             {
 
                 await OpenLocker(locker.Id);
-
-                // success
                 return Ok(new { success = true, lockerId = locker.Id });
             }
-
-            // [else] -> error
             return BadRequest(new { success = false, message = "Neteisingas PIN kodas." });
         }
         catch (Exception ex)
@@ -129,6 +119,19 @@ public class LockerController(ILockerServices lockerServices) : ControllerBase
         try
         {
             await lockerServices.HandleLockerClosedAsync(id);
+            return Ok(new { success = true });
+        }
+        catch (Exception ex)
+        {
+            return BadRequest(new { message = ex.Message });
+        }
+    }
+    [HttpPost("{id:guid}/reset")]
+    public async Task<IActionResult> ResetLocker([FromRoute] Guid id, [FromBody] ResetLockerDto dto)
+    {
+        try
+        {
+            await lockerServices.ResetLockerAsync(id, dto.PinCode);
             return Ok(new { success = true });
         }
         catch (Exception ex)

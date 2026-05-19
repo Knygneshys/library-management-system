@@ -12,5 +12,9 @@ namespace backend.Models
         public Locker Locker { get; set; } = null!;
         public Reservation? IssueReservation { get; set; }
         public Reservation? ReturnReservation { get; set; }
+        public static IssueCompartment GetByLocker(Locker locker)
+        {
+            return locker.IssueCompartment ?? throw new Exception("Compartment not found");
+        }
     }
 }

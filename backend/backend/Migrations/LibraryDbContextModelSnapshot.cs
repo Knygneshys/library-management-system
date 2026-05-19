@@ -2,20 +2,17 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
-using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using backend.Data;
 
 #nullable disable
 
-namespace backend.Data.Migrations
+namespace backend.Migrations
 {
     [DbContext(typeof(LibraryDbContext))]
-    [Migration("20260519082314_AddPublisherAndGenreTables")]
-    partial class AddPublisherAndGenreTables
+    partial class LibraryDbContextModelSnapshot : ModelSnapshot
     {
-        /// <inheritdoc />
-        protected override void BuildTargetModel(ModelBuilder modelBuilder)
+        protected override void BuildModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "10.0.6");
@@ -32,7 +29,7 @@ namespace backend.Data.Migrations
 
                     b.HasIndex("GenresId");
 
-                    b.ToTable("BookGenres", (string)null);
+                    b.ToTable("BookGenre");
                 });
 
             modelBuilder.Entity("Locker", b =>
@@ -44,11 +41,16 @@ namespace backend.Data.Migrations
                     b.Property<double>("Height")
                         .HasColumnType("REAL");
 
+                    b.Property<bool>("IsDoorClosed")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<Guid>("IssueCompartmentId")
+                        .HasColumnType("TEXT");
+
                     b.Property<double>("Length")
                         .HasColumnType("REAL");
 
                     b.Property<string>("LocationCode")
-                        .IsRequired()
                         .HasColumnType("TEXT");
 
                     b.Property<int>("LockerState")
@@ -144,6 +146,29 @@ namespace backend.Data.Migrations
                     b.ToTable("Books");
                 });
 
+            modelBuilder.Entity("backend.Models.Copy", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("TEXT");
+
+                    b.Property<Guid>("BookId")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Code")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<bool>("IsTaken")
+                        .HasColumnType("INTEGER");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("BookId");
+
+                    b.ToTable("Copies");
+                });
+
             modelBuilder.Entity("backend.Models.Genre", b =>
                 {
                     b.Property<Guid>("Id")
@@ -156,10 +181,84 @@ namespace backend.Data.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("Title")
+                    b.ToTable("Genres");
+                });
+
+            modelBuilder.Entity("backend.Models.IssueCompartment", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime>("InsertionDate")
+                        .HasColumnType("TEXT");
+
+                    b.Property<Guid>("LockerId")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("PinCodeLibrarian")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("PinCodeReader")
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("LockerId")
                         .IsUnique();
 
-                    b.ToTable("Genres");
+                    b.ToTable("IssueCompartments");
+                });
+
+            modelBuilder.Entity("backend.Models.LibraryTask", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("TEXT");
+
+                    b.Property<bool>("IsDone")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<bool>("IsIssueTask")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<Guid>("ReservationId")
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ReservationId");
+
+                    b.ToTable("LibraryTasks");
+                });
+
+            modelBuilder.Entity("backend.Models.Loan", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("TEXT");
+
+                    b.Property<Guid>("CopyId")
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime>("LoanDate")
+                        .HasColumnType("TEXT");
+
+                    b.Property<Guid>("ReservationId")
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime>("ReturnDate")
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CopyId")
+                        .IsUnique();
+
+                    b.HasIndex("ReservationId")
+                        .IsUnique();
+
+                    b.ToTable("Loans");
                 });
 
             modelBuilder.Entity("backend.Models.ParcelLocker", b =>
@@ -237,10 +336,56 @@ namespace backend.Data.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("Name")
+                    b.ToTable("Publishers");
+                });
+
+            modelBuilder.Entity("backend.Models.Reservation", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("TEXT");
+
+                    b.Property<Guid>("BookId")
+                        .HasColumnType("TEXT");
+
+                    b.Property<Guid?>("CopyId")
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime>("DueDate")
+                        .HasColumnType("TEXT");
+
+                    b.Property<bool>("IsExtended")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<Guid?>("IssueCompartmentId")
+                        .HasColumnType("TEXT");
+
+                    b.Property<Guid?>("ReturnCompartmentId")
+                        .HasColumnType("TEXT");
+
+                    b.Property<int>("State")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<bool>("WantsToReturn")
+                        .HasColumnType("INTEGER");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("BookId");
+
+                    b.HasIndex("CopyId")
                         .IsUnique();
 
-                    b.ToTable("Publishers");
+                    b.HasIndex("IssueCompartmentId")
+                        .IsUnique();
+
+                    b.HasIndex("ReturnCompartmentId")
+                        .IsUnique();
+
+                    b.ToTable("Reservations");
                 });
 
             modelBuilder.Entity("BookGenre", b =>
@@ -296,9 +441,116 @@ namespace backend.Data.Migrations
                     b.Navigation("Publisher");
                 });
 
+            modelBuilder.Entity("backend.Models.Copy", b =>
+                {
+                    b.HasOne("backend.Models.Book", "Book")
+                        .WithMany("Copies")
+                        .HasForeignKey("BookId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Book");
+                });
+
+            modelBuilder.Entity("backend.Models.IssueCompartment", b =>
+                {
+                    b.HasOne("Locker", "Locker")
+                        .WithOne("IssueCompartment")
+                        .HasForeignKey("backend.Models.IssueCompartment", "LockerId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Locker");
+                });
+
+            modelBuilder.Entity("backend.Models.LibraryTask", b =>
+                {
+                    b.HasOne("backend.Models.Reservation", "Reservation")
+                        .WithMany("LibraryTasks")
+                        .HasForeignKey("ReservationId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Reservation");
+                });
+
+            modelBuilder.Entity("backend.Models.Loan", b =>
+                {
+                    b.HasOne("backend.Models.Copy", "Copy")
+                        .WithOne("Loan")
+                        .HasForeignKey("backend.Models.Loan", "CopyId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("backend.Models.Reservation", "Reservation")
+                        .WithOne("Loan")
+                        .HasForeignKey("backend.Models.Loan", "ReservationId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Copy");
+
+                    b.Navigation("Reservation");
+                });
+
+            modelBuilder.Entity("backend.Models.Reservation", b =>
+                {
+                    b.HasOne("backend.Models.Book", "Book")
+                        .WithMany("Reservations")
+                        .HasForeignKey("BookId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("backend.Models.Copy", "Copy")
+                        .WithOne("Reservation")
+                        .HasForeignKey("backend.Models.Reservation", "CopyId");
+
+                    b.HasOne("backend.Models.IssueCompartment", "IssueCompartment")
+                        .WithOne("IssueReservation")
+                        .HasForeignKey("backend.Models.Reservation", "IssueCompartmentId");
+
+                    b.HasOne("backend.Models.IssueCompartment", "ReturnCompartment")
+                        .WithOne("ReturnReservation")
+                        .HasForeignKey("backend.Models.Reservation", "ReturnCompartmentId");
+
+                    b.Navigation("Book");
+
+                    b.Navigation("Copy");
+
+                    b.Navigation("IssueCompartment");
+
+                    b.Navigation("ReturnCompartment");
+                });
+
+            modelBuilder.Entity("Locker", b =>
+                {
+                    b.Navigation("IssueCompartment");
+                });
+
             modelBuilder.Entity("backend.Models.Author", b =>
                 {
                     b.Navigation("Books");
+                });
+
+            modelBuilder.Entity("backend.Models.Book", b =>
+                {
+                    b.Navigation("Copies");
+
+                    b.Navigation("Reservations");
+                });
+
+            modelBuilder.Entity("backend.Models.Copy", b =>
+                {
+                    b.Navigation("Loan");
+
+                    b.Navigation("Reservation");
+                });
+
+            modelBuilder.Entity("backend.Models.IssueCompartment", b =>
+                {
+                    b.Navigation("IssueReservation");
+
+                    b.Navigation("ReturnReservation");
                 });
 
             modelBuilder.Entity("backend.Models.ParcelLocker", b =>
@@ -314,6 +566,13 @@ namespace backend.Data.Migrations
             modelBuilder.Entity("backend.Models.Publisher", b =>
                 {
                     b.Navigation("Books");
+                });
+
+            modelBuilder.Entity("backend.Models.Reservation", b =>
+                {
+                    b.Navigation("LibraryTasks");
+
+                    b.Navigation("Loan");
                 });
 #pragma warning restore 612, 618
         }

@@ -71,10 +71,16 @@ export const deleteLocker = async (locker: Locker) => {
   }
 };
 
-
-
-
-
+export const resetLocker = async (lockerId: string, pinCode: string) => {
+  try {
+    const uri = `/locker/${lockerId}/reset`;
+    const response = await apiClient.post<{ success: boolean }>(uri, { pinCode });
+    return response.data;
+  } catch (error) {
+    console.error("Error resetting locker:", error);
+    throw error;
+  }
+};
 
 export const submitPin = async (pinCode: string) => {
   try {

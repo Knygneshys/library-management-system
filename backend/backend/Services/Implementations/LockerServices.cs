@@ -1,5 +1,6 @@
 using backend.Data;
 using backend.Dtos.Locker;
+using backend.Enums;
 using backend.Exceptions;
 using backend.Models;
 using backend.Services.Interfaces;
@@ -129,14 +130,6 @@ public class LockerServices(LibraryDbContext dbContext) : ILockerServices
         await dbContext.SaveChangesAsync();
     }
 
-
-
-
-
-
-
-
-    // 5: getLockerByCode()
     public async Task<LockerDto?> GetLockerByCodeAsync(string pinCode)
     {
         var locker = await dbContext.Lockers
@@ -161,7 +154,6 @@ public class LockerServices(LibraryDbContext dbContext) : ILockerServices
             ParcelLockerId = locker.ParcelLockerId
         };
     }
-    //7: openLocker() viduje
     public async Task OpenLockerAsync(Guid id)
     {
         var locker = await dbContext.Lockers.FirstOrDefaultAsync(l => l.Id == id)
@@ -172,7 +164,6 @@ public class LockerServices(LibraryDbContext dbContext) : ILockerServices
         await dbContext.SaveChangesAsync();
     }
 
-    // 11: isLockerClosed()
     public async Task<bool> IsLockerClosedAsync(Guid id)
     {
         var locker = await dbContext.Lockers.FirstOrDefaultAsync(l => l.Id == id)
@@ -180,13 +171,11 @@ public class LockerServices(LibraryDbContext dbContext) : ILockerServices
         return locker.IsDoorClosed;
     }
 
-    // 10: handleLockerClosed()
     public async Task HandleLockerClosedAsync(Guid id)
     {
         var locker = await dbContext.Lockers.FirstOrDefaultAsync(l => l.Id == id)
             ?? throw new EntityNotFoundException(EntityName);
 
-        // Žmogus uždarė dureles
         locker.IsDoorClosed = true;
 
         await dbContext.SaveChangesAsync();
@@ -194,10 +183,6 @@ public class LockerServices(LibraryDbContext dbContext) : ILockerServices
 
 
 
-
-
-
-    // PASIIMTI KNYGA
     public async Task ResetLockerAsync(Guid lockerId, string pinCode)
     {
         var locker = await dbContext.Lockers
@@ -205,12 +190,10 @@ public class LockerServices(LibraryDbContext dbContext) : ILockerServices
             .FirstOrDefaultAsync(l => l.Id == lockerId)
             ?? throw new EntityNotFoundException(EntityName);
 
-        // 4: reset()
-        ResetLockerState(locker);
+        locker.ResetLockerState();
+        dbContext.Lockers.Update(locker);
 
-        // 6: getByLocker() ir 7: issueCompartment
-
-        var issueCompartment = GetByLocker(locker);
+        var issueCompartment = IssueCompartment.GetByLocker(locker);
 
         if (issueCompartment.PinCodeReader == pinCode)
         {
@@ -219,11 +202,11 @@ public class LockerServices(LibraryDbContext dbContext) : ILockerServices
 
             if (reservation != null)
             {
-                // 10: update() 
-                UpdateReservation(reservation);
-
-                // 12: create() ir 13: loan
-                await CreateLoanAsync(reservation);
+                reservation.UpdateReservation();
+                dbContext.Reservations.Update(reservation);
+                // create loan
+                var loan = Loan.Create(reservation);
+                await dbContext.Loans.AddAsync(loan);
             }
         }
         else if (issueCompartment.PinCodeLibrarian == pinCode)
@@ -237,15 +220,16 @@ public class LockerServices(LibraryDbContext dbContext) : ILockerServices
                 var copy = await dbContext.Copies.FindAsync(reservation.CopyId.Value);
                 if (copy != null)
                 {
-                    // 18: updateStatus() - pazymeti egzemplioriu kaip laisva
-                    UpdateCopyStatus(copy);
+                    // pazymeti egzemplioriu kaip laisva
+                    copy.UpdateStatus();
+                    dbContext.Copies.Update(copy);
                 }
 
-                // 20: update() (Task)
+                // pazymeti is_done true
                 var task = reservation.LibraryTasks.FirstOrDefault(t => t.IsIssueTask == false && t.IsDone == false);
                 if (task != null)
                 {
-                    UpdateTask(task);
+                    task.UpdateTask();
                 }
             }
         }
@@ -257,49 +241,5 @@ public class LockerServices(LibraryDbContext dbContext) : ILockerServices
         dbContext.IssueCompartments.Remove(issueCompartment);
         await dbContext.SaveChangesAsync();
     }
-
-    //pagalbiniai reikia iskelt cj
-
-    private void ResetLockerState(Locker locker)
-    {
-        locker.IsDoorClosed = true;
-        locker.LockerState = LockerState.Empty;
-        dbContext.Lockers.Update(locker);
-    }
-    private IssueCompartment GetByLocker(Locker locker)
-    {
-        return locker.IssueCompartment ?? throw new Exception("");
-    }
-    private void UpdateReservation(Reservation reservation)
-    {
-        reservation.State = ReservationState.Completed;
-        dbContext.Reservations.Update(reservation);
-    }
-
-    private async Task CreateLoanAsync(Reservation reservation)
-    {
-        var loan = new Loan
-        {
-            Id = Guid.NewGuid(),
-            LoanDate = DateTime.UtcNow,
-            ReturnDate = DateTime.UtcNow.AddDays(14),
-            CopyId = reservation.CopyId ?? Guid.Empty,
-            UserId = reservation.UserId
-        };
-        await dbContext.Loans.AddAsync(loan);
-    }
-
-    private void UpdateCopyStatus(Copy copy)
-    {
-        copy.IsTaken = false;
-        dbContext.Copies.Update(copy);
-    }
-
-    private void UpdateTask(LibraryTask task)
-    {
-        task.IsDone = true;
-        dbContext.LibraryTasks.Update(task);
-    }
-
 
 }
