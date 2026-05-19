@@ -6,21 +6,54 @@ import {
   Typography,
   Chip,
   Stack,
+  Button,
 } from "@mui/material";
 import type { Book } from "../../../../entities/Book";
+import { ReservationState } from "../../../../entities/enums/ReservationState";
+import { returnBook } from "../../../../external-api-clients/clients/externalReservationApiClient";
+import { useState } from "react";
+import toast from "react-hot-toast";
+import {
+  handleErrorToast,
+  successfullUpdateMessage,
+} from "../../../../utils/toastUtils";
 
 interface Props {
   isOpen: boolean;
   book: Book | null;
   handleClose: () => void;
+  onBookReturned: () => void;
 }
 
 export default function BookDetailsModal({
   isOpen,
   book,
   handleClose,
+  onBookReturned,
 }: Props) {
+  const [isReturning, setIsReturning] = useState(false);
+
   if (!book) return null;
+
+  const canReturn =
+    book.activeReservation?.state === ReservationState.NotLate ||
+    book.activeReservation?.state === ReservationState.Late;
+
+  const handleReturnBook = async () => {
+    if (!book.activeReservation) return;
+
+    try {
+      setIsReturning(true);
+      await returnBook(book.activeReservation.id);
+      toast.success(successfullUpdateMessage("Book returned"));
+      onBookReturned();
+      handleClose();
+    } catch (error) {
+      handleErrorToast(error);
+    } finally {
+      setIsReturning(false);
+    }
+  };
 
   return (
     <Dialog open={isOpen} onClose={handleClose} maxWidth="sm" fullWidth>
@@ -103,6 +136,50 @@ export default function BookDetailsModal({
               {book.summary}
             </Typography>
           </Box>
+
+          {book.activeReservation !== null && (
+            <Box>
+              <Typography variant="subtitle2" color="textSecondary">
+                Reservation State
+              </Typography>
+              <Typography variant="body1">
+                {ReservationState[book.activeReservation.state]}
+              </Typography>
+            </Box>
+          )}
+
+          {canReturn && (
+            <Stack direction="row" spacing={2} sx={{ mt: 2 }}>
+              <Button
+                variant="contained"
+                color="primary"
+                onClick={handleReturnBook}
+                disabled={isReturning}
+                fullWidth
+              >
+                Return
+              </Button>
+              <Button
+                variant="outlined"
+                onClick={handleClose}
+                fullWidth
+                disabled={isReturning}
+              >
+                Close
+              </Button>
+            </Stack>
+          )}
+
+          {!canReturn && (
+            <Button
+              variant="outlined"
+              onClick={handleClose}
+              fullWidth
+              sx={{ mt: 2 }}
+            >
+              Close
+            </Button>
+          )}
         </Box>
       </DialogContent>
     </Dialog>

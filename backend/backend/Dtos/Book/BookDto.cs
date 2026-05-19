@@ -1,5 +1,3 @@
-using backend.Enums;
-
 namespace backend.Dtos.Book;
 
 public class BookDto
@@ -24,5 +22,5 @@ public class BookDto
 
     public string Publisher { get; set; }
 
-    public ReservationState? ActiveReservationState { get; set; }
+    public ReservationDto? ActiveReservation { get; set; }
 }

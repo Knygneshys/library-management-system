@@ -23,10 +23,10 @@ public class BookServices(LibraryDbContext dbContext) : IBookServices
                 PrintingHouse = b.PrintingHouse.Name,
                 Genres = b.Genres.Select(g => g.Title).ToList(),
                 Publisher = b.Publisher.Name,
-                ActiveReservationState = b.Reservations
+                ActiveReservation = b.Reservations
                     .Where(r => r.State == ReservationState.InQueue || r.State == ReservationState.InProgress || r.State == ReservationState.NotLate || r.State == ReservationState.Late)
                     .OrderBy(r => r.CreatedAt)
-                    .Select(r => (ReservationState?)r.State)
+                    .Select(r => new ReservationDto { Id = r.Id, State = r.State })
                     .FirstOrDefault()
             })
             .ToListAsync();

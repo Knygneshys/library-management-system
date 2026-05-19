@@ -33,3 +33,7 @@ export const bookUris = {
   UPDATE: "Book",
   DELETE: "Book",
 };
+
+export const reservationUris = {
+  RETURN_BOOK: "Reservation/return",
+};

@@ -1,4 +1,10 @@
 import type { Guid } from "guid-typescript";
+import type { ReservationState } from "./enums/ReservationState";
+
+interface BookReservationDto {
+  id: Guid;
+  state: ReservationState;
+}
 
 export type Book = {
   id: Guid;
@@ -11,4 +17,5 @@ export type Book = {
   printingHouse: string;
   genres: string[];
   publisher: string;
+  activeReservation: BookReservationDto | null;
 };

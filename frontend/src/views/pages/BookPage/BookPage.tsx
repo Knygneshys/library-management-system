@@ -29,6 +29,11 @@ export default function BookPage() {
     setDetailsModalIsOpen(false);
   };
 
+  const handleBookReturned = async () => {
+    const data = await getAllBooks();
+    setBooks(data);
+  };
+
   return (
     <Box>
       <BookTable books={books} onDetailsButtonClick={handleViewBookEvent} />
@@ -37,6 +42,7 @@ export default function BookPage() {
           isOpen={detailsModalIsOpen}
           book={bookBeingViewed}
           handleClose={handleDetailsDialogClose}
+          onBookReturned={handleBookReturned}
         />
       )}
     </Box>
