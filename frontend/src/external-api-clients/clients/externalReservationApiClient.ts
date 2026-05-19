@@ -16,3 +16,28 @@ export const returnBook = async (reservationId: Guid) => {
     throw error;
   }
 };
+export const reserveBook = async (bookId: Guid | string) => {
+  try {
+    const response = await apiClient.post(
+      `${reservationUris.RESERVE_BOOK}/${bookId}`,
+    );
+
+    return response.data;
+  } catch (error) {
+    console.error("Error reserving book:", error);
+    throw error;
+  }
+};
+
+export const goToQueue = async (bookId: Guid | string) => {
+  try {
+    const response = await apiClient.post(
+      `${reservationUris.GO_TO_QUEUE}/${bookId}`,
+    );
+
+    return response.data;
+  } catch (error) {
+    console.error("Error joining queue:", error);
+    throw error;
+  }
+};

@@ -36,4 +36,6 @@ export const bookUris = {
 
 export const reservationUris = {
   RETURN_BOOK: "Reservation/return",
+  RESERVE_BOOK: "Reservation/reserve",
+  GO_TO_QUEUE: "Reservation/queue",
 };
