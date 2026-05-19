@@ -15,10 +15,7 @@ interface Props {
   onDetailsButtonClick: (book: Book) => void;
 }
 
-export default function BookTable({
-  books,
-  onDetailsButtonClick,
-}: Props) {
+export default function BookTable({ books, onDetailsButtonClick }: Props) {
   return (
     <Table>
       <TableHead>
@@ -29,8 +26,11 @@ export default function BookTable({
           <TableCell sx={{ fontSize: tableHeaderFontSize, width: "20%" }}>
             Author
           </TableCell>
-          <TableCell sx={{ fontSize: tableHeaderFontSize, width: "50%" }}>
+          <TableCell sx={{ fontSize: tableHeaderFontSize, width: "20%" }}>
             ISBN
+          </TableCell>
+          <TableCell sx={{ fontSize: tableHeaderFontSize, width: "30%" }}>
+            Free Copies
           </TableCell>
           <TableCell>Actions</TableCell>
         </TableRow>
@@ -41,6 +41,7 @@ export default function BookTable({
             <TableCell>{book.title}</TableCell>
             <TableCell>{book.author}</TableCell>
             <TableCell>{book.isbn}</TableCell>
+            <TableCell>{book.freeCopyCount}</TableCell>
             <TableCell>
               <Stack direction={"row"} spacing={2}>
                 <Button onClick={() => onDetailsButtonClick(book)}>

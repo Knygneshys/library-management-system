@@ -137,6 +137,45 @@ export default function BookDetailsModal({
             </Typography>
           </Box>
 
+          <Box>
+            <Typography variant="subtitle2" color="textSecondary">
+              Copies
+            </Typography>
+
+            <Typography variant="body2" sx={{ mt: 1 }}>
+              Available copies: {book.freeCopyCount} /{" "}
+              {book.copies?.length ?? 0}
+            </Typography>
+
+            <Stack spacing={1} sx={{ mt: 1 }}>
+              {book.copies && book.copies.length > 0 ? (
+                book.copies.map((copy) => (
+                  <Box
+                    key={copy.id.toString()}
+                    sx={{
+                      display: "flex",
+                      justifyContent: "space-between",
+                      alignItems: "center",
+                    }}
+                  >
+                    <Typography variant="body2">{copy.code}</Typography>
+
+                    <Chip
+                      label={copy.isTaken ? "Taken" : "Available"}
+                      color={copy.isTaken ? "error" : "success"}
+                      size="small"
+                      variant="outlined"
+                    />
+                  </Box>
+                ))
+              ) : (
+                <Typography variant="body2" color="textSecondary">
+                  No copies available
+                </Typography>
+              )}
+            </Stack>
+          </Box>
+
           {book.activeReservation !== null && (
             <Box>
               <Typography variant="subtitle2" color="textSecondary">
