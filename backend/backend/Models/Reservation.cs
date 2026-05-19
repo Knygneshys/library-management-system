@@ -5,6 +5,8 @@ namespace backend.Models;
 public class Reservation
 {
     public Guid Id { get; set; }
+
+    public DateTime CreatedAt { get; set; }
     
     public bool IsExtended { get; set; }
     

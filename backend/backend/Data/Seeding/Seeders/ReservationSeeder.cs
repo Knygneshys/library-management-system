@@ -21,6 +21,7 @@ public class ReservationSeeder : ISeeder
             new Reservation
             {
                 Id = Guid.NewGuid(),
+                CreatedAt = now.AddDays(-3),
                 BookId = books[0].Id,
                 DueDate = now.AddDays(5), 
                 IsExtended = false,
@@ -30,7 +31,8 @@ public class ReservationSeeder : ISeeder
             new Reservation
             {
                 Id = Guid.NewGuid(),
-                BookId = books.Count > 1 ? books[1].Id : books[0].Id,
+                CreatedAt = now.AddDays(-2),
+                BookId = books[0].Id,
                 DueDate = now.AddDays(10),
                 IsExtended = false,
                 WantsToReturn = false,
@@ -39,7 +41,8 @@ public class ReservationSeeder : ISeeder
             new Reservation
             {
                 Id = Guid.NewGuid(),
-                BookId = books.Count > 2 ? books[2].Id : books[0].Id,
+                CreatedAt = now.AddDays(-1),
+                BookId = books[0].Id,
                 DueDate = now.AddDays(15),
                 IsExtended = false,
                 WantsToReturn = false,
