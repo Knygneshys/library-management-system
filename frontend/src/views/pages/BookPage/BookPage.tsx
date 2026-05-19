@@ -31,7 +31,11 @@ export default function BookPage() {
 
   return (
     <Box>
+<<<<<<< HEAD
       <BookTable books={books} onDetailsButtonClick={handleViewBookEvent} />
+=======
+      <BookTable books={books} onDetailsButtonClick={handleDetailsDialogOpen} />
+>>>>>>> 5a51fdf257fb93d85620c68174a50ab2688991b8
       {detailsModalIsOpen && bookBeingViewed && (
         <BookDetailsModal
           isOpen={detailsModalIsOpen}
