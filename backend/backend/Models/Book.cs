@@ -27,4 +27,8 @@ public class Book
     public Guid PublisherId { get; set; }
 
     public Publisher Publisher { get; set; }
+
+    public virtual ICollection<Copy> Copies { get; set; }
+
+    public virtual ICollection<Reservation> Reservations { get; set; }
 }
