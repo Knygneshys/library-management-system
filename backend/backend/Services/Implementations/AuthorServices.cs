@@ -10,7 +10,7 @@ namespace backend.Services.Implementations;
 public class AuthorServices(LibraryDbContext dbContext) : IAuthorServices
 {
     private const string EntityName = "Author";
-    
+
     public async Task<List<Author>> CreateAsync(AuthorCreateDto dto)
     {
         var authorInDb = await dbContext.Authors.FirstOrDefaultAsync(a => a.FullName.ToLower().Equals(dto.FullName.ToLower()));
@@ -45,10 +45,10 @@ public class AuthorServices(LibraryDbContext dbContext) : IAuthorServices
         {
             throw new EntityNotFoundException(EntityName);
         }
-        
+
         var authorsNameChanged = !author.FullName.ToLower().Equals(dto.FullName.ToLower());
-        
-        if(authorsNameChanged)
+
+        if (authorsNameChanged)
         {
             var newNameAlreadyExists = await dbContext.Authors.AnyAsync(a => a.FullName.ToLower().Equals(dto.FullName.ToLower()));
             if (newNameAlreadyExists)
@@ -60,7 +60,7 @@ public class AuthorServices(LibraryDbContext dbContext) : IAuthorServices
         author.FullName = dto.FullName;
         author.Nationality = dto.Nationality;
         author.Biography = dto.Biography;
-        
+
         await dbContext.SaveChangesAsync();
 
         return await GetAllAsync();
@@ -73,13 +73,13 @@ public class AuthorServices(LibraryDbContext dbContext) : IAuthorServices
         {
             throw new EntityNotFoundException(EntityName);
         }
-        
+
         var authorHasBooks = await dbContext.Books.AnyAsync(b => b.AuthorId.Equals(id));
         if (authorHasBooks)
         {
             throw new AuthorHasBookException(author.FullName);
         }
-        
+
         dbContext.Authors.Remove(author);
         await dbContext.SaveChangesAsync();
 

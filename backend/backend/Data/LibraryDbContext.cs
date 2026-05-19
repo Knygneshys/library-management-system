@@ -18,7 +18,7 @@ public class LibraryDbContext(DbContextOptions<LibraryDbContext> options) : DbCo
         modelBuilder.Entity<Author>()
                 .HasIndex(a => a.FullName)
                 .IsUnique();
-        
+
         modelBuilder.Entity<ParcelLocker>()
                 .HasIndex(p => p.Address)
                 .IsUnique();
@@ -32,7 +32,7 @@ public class LibraryDbContext(DbContextOptions<LibraryDbContext> options) : DbCo
                 .WithMany(a => a.Lockers)
                 .HasForeignKey(b => b.ParcelLockerId)
                 .IsRequired();
-        
+
         modelBuilder.Entity<Book>()
                 .HasIndex(b => b.Isbn)
                 .IsUnique();

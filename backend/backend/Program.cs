@@ -38,7 +38,7 @@ builder.Services.AddScoped<IAuthorServices, AuthorServices>();
 builder.Services.AddScoped<IParcelLockerServices, ParcelLockerServices>();
 builder.Services.AddScoped<ILockerServices, LockerServices>();
 builder.Services.AddScoped<IPrintingHouseServices, PrintingHouseServices>();
-
+builder.Services.AddScoped<IBookServices, BookServices>();
 
 builder.Services.AddScoped<ISeeder, PrintingHouseSeeder>();
 builder.Services.AddScoped<ISeeder, PublisherSeeder>();

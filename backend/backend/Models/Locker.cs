@@ -4,7 +4,7 @@ public class Locker
 {
     public Guid Id { get; set; }
     public string LocationCode { get; set; }
-    public double Height { get; set; } 
+    public double Height { get; set; }
     public double Width { get; set; }
     public double Length { get; set; }
     public LockerState LockerState { get; set; }

@@ -18,7 +18,7 @@ public class ParcelLockerController(IParcelLockerServices parcelLockerServices) 
 
             return Ok(parcelLockerId);
         }
-        catch(Exception ex)
+        catch (Exception ex)
         {
             return BadRequest(ex.Message);
         }
@@ -28,7 +28,7 @@ public class ParcelLockerController(IParcelLockerServices parcelLockerServices) 
     public async Task<IActionResult> GetParcelLockers()
     {
         var parcelLockers = await parcelLockerServices.GetAllAsync();
-        
+
         return Ok(parcelLockers);
     }
 
