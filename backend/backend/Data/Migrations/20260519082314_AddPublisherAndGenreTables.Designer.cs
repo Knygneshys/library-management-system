@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using backend.Data;
 
@@ -10,9 +11,11 @@ using backend.Data;
 namespace backend.Data.Migrations
 {
     [DbContext(typeof(LibraryDbContext))]
-    partial class LibraryDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260519082314_AddPublisherAndGenreTables")]
+    partial class AddPublisherAndGenreTables
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "10.0.6");
@@ -141,29 +144,6 @@ namespace backend.Data.Migrations
                     b.ToTable("Books");
                 });
 
-            modelBuilder.Entity("backend.Models.Copy", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("TEXT");
-
-                    b.Property<Guid>("BookId")
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("Code")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
-
-                    b.Property<bool>("IsTaken")
-                        .HasColumnType("INTEGER");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("BookId");
-
-                    b.ToTable("Copies");
-                });
-
             modelBuilder.Entity("backend.Models.Genre", b =>
                 {
                     b.Property<Guid>("Id")
@@ -180,35 +160,6 @@ namespace backend.Data.Migrations
                         .IsUnique();
 
                     b.ToTable("Genres");
-                });
-
-            modelBuilder.Entity("backend.Models.Loan", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("TEXT");
-
-                    b.Property<Guid>("CopyId")
-                        .HasColumnType("TEXT");
-
-                    b.Property<DateTime>("LoanDate")
-                        .HasColumnType("TEXT");
-
-                    b.Property<Guid>("ReservationId")
-                        .HasColumnType("TEXT");
-
-                    b.Property<DateTime>("ReturnDate")
-                        .HasColumnType("TEXT");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("CopyId")
-                        .IsUnique();
-
-                    b.HasIndex("ReservationId")
-                        .IsUnique();
-
-                    b.ToTable("Loans");
                 });
 
             modelBuilder.Entity("backend.Models.ParcelLocker", b =>
@@ -292,37 +243,6 @@ namespace backend.Data.Migrations
                     b.ToTable("Publishers");
                 });
 
-            modelBuilder.Entity("backend.Models.Reservation", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("TEXT");
-
-                    b.Property<Guid>("BookId")
-                        .HasColumnType("TEXT");
-
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("TEXT");
-
-                    b.Property<DateTime>("DueDate")
-                        .HasColumnType("TEXT");
-
-                    b.Property<bool>("IsExtended")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<int>("State")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<bool>("WantsToReturn")
-                        .HasColumnType("INTEGER");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("BookId");
-
-                    b.ToTable("Reservations");
-                });
-
             modelBuilder.Entity("BookGenre", b =>
                 {
                     b.HasOne("backend.Models.Book", null)
@@ -376,63 +296,9 @@ namespace backend.Data.Migrations
                     b.Navigation("Publisher");
                 });
 
-            modelBuilder.Entity("backend.Models.Copy", b =>
-                {
-                    b.HasOne("backend.Models.Book", "Book")
-                        .WithMany("Copies")
-                        .HasForeignKey("BookId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Book");
-                });
-
-            modelBuilder.Entity("backend.Models.Loan", b =>
-                {
-                    b.HasOne("backend.Models.Copy", "Copy")
-                        .WithOne("Loan")
-                        .HasForeignKey("backend.Models.Loan", "CopyId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("backend.Models.Reservation", "Reservation")
-                        .WithOne("Loan")
-                        .HasForeignKey("backend.Models.Loan", "ReservationId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Copy");
-
-                    b.Navigation("Reservation");
-                });
-
-            modelBuilder.Entity("backend.Models.Reservation", b =>
-                {
-                    b.HasOne("backend.Models.Book", "Book")
-                        .WithMany("Reservations")
-                        .HasForeignKey("BookId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Book");
-                });
-
             modelBuilder.Entity("backend.Models.Author", b =>
                 {
                     b.Navigation("Books");
-                });
-
-            modelBuilder.Entity("backend.Models.Book", b =>
-                {
-                    b.Navigation("Copies");
-
-                    b.Navigation("Reservations");
-                });
-
-            modelBuilder.Entity("backend.Models.Copy", b =>
-                {
-                    b.Navigation("Loan")
-                        .IsRequired();
                 });
 
             modelBuilder.Entity("backend.Models.ParcelLocker", b =>
@@ -448,12 +314,6 @@ namespace backend.Data.Migrations
             modelBuilder.Entity("backend.Models.Publisher", b =>
                 {
                     b.Navigation("Books");
-                });
-
-            modelBuilder.Entity("backend.Models.Reservation", b =>
-                {
-                    b.Navigation("Loan")
-                        .IsRequired();
                 });
 #pragma warning restore 612, 618
         }

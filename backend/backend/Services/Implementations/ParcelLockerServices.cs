@@ -9,7 +9,7 @@ namespace backend.Services.Implementations;
 
 public class ParcelLockerServices(LibraryDbContext dbContext) : IParcelLockerServices
 {
-    
+
     private const string EntityName = "ParcelLocker";
     public async Task<ParcelLockerDto> CreateAsync(ParcelLockerCreateDto dto)
     {
@@ -51,7 +51,7 @@ public class ParcelLockerServices(LibraryDbContext dbContext) : IParcelLockerSer
 
     public async Task<ParcelLockerDto> UpdateAsync(Guid id, ParcelLockerUpdateDto dto)
     {
-        var parcelLocker = await dbContext.ParcelLockers.FirstOrDefaultAsync(p => p.Id.Equals(id)) 
+        var parcelLocker = await dbContext.ParcelLockers.FirstOrDefaultAsync(p => p.Id.Equals(id))
             ?? throw new KeyNotFoundException("Parcel locker not found.");
 
         if (!parcelLocker.Address.ToLower().Equals(dto.Address.ToLower()) &&
@@ -59,10 +59,10 @@ public class ParcelLockerServices(LibraryDbContext dbContext) : IParcelLockerSer
         {
             throw new ParcelLockerByAddressAlreadyExistsException(dto.Address);
         }
-        
+
         parcelLocker.Address = dto.Address;
         parcelLocker.LockerState = dto.LockerState;
-        
+
         await dbContext.SaveChangesAsync();
 
         return new ParcelLockerDto
@@ -75,9 +75,9 @@ public class ParcelLockerServices(LibraryDbContext dbContext) : IParcelLockerSer
 
     public async void Delete(Guid id)
     {
-        var parcelLocker = await dbContext.ParcelLockers.FirstOrDefaultAsync(p => p.Id.Equals(id)) 
+        var parcelLocker = await dbContext.ParcelLockers.FirstOrDefaultAsync(p => p.Id.Equals(id))
             ?? throw new EntityNotFoundException(EntityName);
-        
+
         dbContext.ParcelLockers.Remove(parcelLocker);
         await dbContext.SaveChangesAsync();
     }
