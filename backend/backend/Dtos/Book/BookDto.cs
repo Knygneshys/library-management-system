@@ -1,3 +1,5 @@
+using backend.Enums;
+
 namespace backend.Dtos.Book;
 
 public class BookDto
@@ -21,4 +23,6 @@ public class BookDto
     public List<string> Genres { get; set; }
 
     public string Publisher { get; set; }
+
+    public ReservationState? ActiveReservationState { get; set; }
 }
