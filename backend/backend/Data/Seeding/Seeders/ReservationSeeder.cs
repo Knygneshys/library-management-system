@@ -23,7 +23,7 @@ public class ReservationSeeder : ISeeder
                 Id = Guid.NewGuid(),
                 CreatedAt = now.AddDays(-3),
                 BookId = books[0].Id,
-                DueDate = now.AddDays(5), 
+                DueDate = now.AddDays(5),
                 IsExtended = false,
                 WantsToReturn = false,
                 State = ReservationState.NotLate

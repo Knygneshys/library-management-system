@@ -1,3 +1,5 @@
+using backend.Dtos.Copy;
+
 namespace backend.Dtos.Book;
 
 public class BookDto
@@ -22,5 +24,8 @@ public class BookDto
 
     public string Publisher { get; set; }
 
+    public List<CopyDto> Copies { get; set; } = new();
+
+    public int FreeCopyCount { get; set; }
     public ReservationDto? ActiveReservation { get; set; }
 }

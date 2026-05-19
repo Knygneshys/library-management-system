@@ -21,7 +21,7 @@ public class CopySeeder : ISeeder
                 {
                     Id = Guid.NewGuid(),
                     BookId = book.Id,
-                    Code = $"{book.Isbn}-{i+1}",
+                    Code = $"{book.Isbn}-{i + 1}",
                     IsTaken = false
                 });
             }
