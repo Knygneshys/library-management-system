@@ -45,6 +45,9 @@ builder.Services.AddScoped<ISeeder, PublisherSeeder>();
 builder.Services.AddScoped<ISeeder, AuthorSeeder>();
 builder.Services.AddScoped<ISeeder, GenreSeeder>();
 builder.Services.AddScoped<ISeeder, BookSeeder>();
+builder.Services.AddScoped<ISeeder, CopySeeder>();
+builder.Services.AddScoped<ISeeder, ReservationSeeder>();
+builder.Services.AddScoped<ISeeder, LoanSeeder>();
 
 builder.Services.AddScoped<ApplicationSeeder>();
 
