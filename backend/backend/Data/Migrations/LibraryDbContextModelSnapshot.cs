@@ -17,6 +17,21 @@ namespace backend.Data.Migrations
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "10.0.6");
 
+            modelBuilder.Entity("BookGenre", b =>
+                {
+                    b.Property<Guid>("BooksId")
+                        .HasColumnType("TEXT");
+
+                    b.Property<Guid>("GenresId")
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("BooksId", "GenresId");
+
+                    b.HasIndex("GenresId");
+
+                    b.ToTable("BookGenres", (string)null);
+                });
+
             modelBuilder.Entity("Locker", b =>
                 {
                     b.Property<Guid>("Id")
@@ -104,6 +119,9 @@ namespace backend.Data.Migrations
                     b.Property<DateTime>("PublishedAt")
                         .HasColumnType("TEXT");
 
+                    b.Property<Guid>("PublisherId")
+                        .HasColumnType("TEXT");
+
                     b.Property<string>("Summary")
                         .IsRequired()
                         .HasColumnType("TEXT");
@@ -120,6 +138,8 @@ namespace backend.Data.Migrations
                         .IsUnique();
 
                     b.HasIndex("PrintingHouseId");
+
+                    b.HasIndex("PublisherId");
 
                     b.ToTable("Books");
                 });
@@ -145,82 +165,6 @@ namespace backend.Data.Migrations
                     b.HasIndex("BookId");
 
                     b.ToTable("Copies");
-                });
-
-            modelBuilder.Entity("backend.Models.IssueCompartment", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("TEXT");
-
-                    b.Property<DateTime>("InsertionDate")
-                        .HasColumnType("TEXT");
-
-                    b.Property<Guid>("LockerId")
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("PinCodeLibrarian")
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("PinCodeReader")
-                        .HasColumnType("TEXT");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("LockerId")
-                        .IsUnique();
-
-                    b.ToTable("IssueCompartments");
-                });
-
-            modelBuilder.Entity("backend.Models.LibraryTask", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("TEXT");
-
-                    b.Property<bool>("IsDone")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<bool>("IsIssueTask")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<Guid>("ReservationId")
-                        .HasColumnType("TEXT");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("ReservationId");
-
-                    b.ToTable("LibraryTasks");
-                });
-
-            modelBuilder.Entity("backend.Models.Loan", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("TEXT");
-
-                    b.Property<Guid>("CopyId")
-                        .HasColumnType("TEXT");
-
-                    b.Property<DateTime>("LoanDate")
-                        .HasColumnType("TEXT");
-
-                    b.Property<DateTime>("ReturnDate")
-                        .HasColumnType("TEXT");
-
-                    b.Property<Guid>("UserId")
-                        .HasColumnType("TEXT");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("CopyId")
-                        .IsUnique();
-
-                    b.HasIndex("UserId");
-
-                    b.ToTable("Loans");
                 });
 
             modelBuilder.Entity("backend.Models.ParcelLocker", b =>
@@ -274,82 +218,6 @@ namespace backend.Data.Migrations
                     b.ToTable("PrintingHouses");
                 });
 
-            modelBuilder.Entity("backend.Models.Reservation", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("TEXT");
-
-                    b.Property<Guid>("BookId")
-                        .HasColumnType("TEXT");
-
-                    b.Property<Guid?>("CopyId")
-                        .HasColumnType("TEXT");
-
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("TEXT");
-
-                    b.Property<DateTime>("DueDate")
-                        .HasColumnType("TEXT");
-
-                    b.Property<bool>("IsExtended")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<Guid?>("IssueCompartmentId")
-                        .HasColumnType("TEXT");
-
-                    b.Property<Guid?>("ReturnCompartmentId")
-                        .HasColumnType("TEXT");
-
-                    b.Property<int>("State")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<Guid>("UserId")
-                        .HasColumnType("TEXT");
-
-                    b.Property<bool>("WantsToReturn")
-                        .HasColumnType("INTEGER");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("BookId");
-
-                    b.HasIndex("CopyId")
-                        .IsUnique();
-
-                    b.HasIndex("IssueCompartmentId")
-                        .IsUnique();
-
-                    b.HasIndex("ReturnCompartmentId")
-                        .IsUnique();
-
-                    b.HasIndex("UserId");
-
-                    b.ToTable("Reservations");
-                });
-
-            modelBuilder.Entity("backend.Models.User", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("TEXT");
-
-                    b.Property<bool>("Deactivated")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<string>("Email")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("FullName")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Users");
-                });
-
             modelBuilder.Entity("Locker", b =>
                 {
                     b.HasOne("backend.Models.ParcelLocker", "ParcelLocker")
@@ -375,122 +243,22 @@ namespace backend.Data.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.HasOne("backend.Models.Publisher", "Publisher")
+                        .WithMany("Books")
+                        .HasForeignKey("PublisherId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.Navigation("Author");
 
                     b.Navigation("PrintingHouse");
-                });
 
-            modelBuilder.Entity("backend.Models.Copy", b =>
-                {
-                    b.HasOne("backend.Models.Book", "Book")
-                        .WithMany()
-                        .HasForeignKey("BookId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Book");
-                });
-
-            modelBuilder.Entity("backend.Models.IssueCompartment", b =>
-                {
-                    b.HasOne("Locker", "Locker")
-                        .WithOne("IssueCompartment")
-                        .HasForeignKey("backend.Models.IssueCompartment", "LockerId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Locker");
-                });
-
-            modelBuilder.Entity("backend.Models.LibraryTask", b =>
-                {
-                    b.HasOne("backend.Models.Reservation", "Reservation")
-                        .WithMany("LibraryTasks")
-                        .HasForeignKey("ReservationId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Reservation");
-                });
-
-            modelBuilder.Entity("backend.Models.Loan", b =>
-                {
-                    b.HasOne("backend.Models.Copy", "Copy")
-                        .WithOne("Loan")
-                        .HasForeignKey("backend.Models.Loan", "CopyId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("backend.Models.User", "User")
-                        .WithMany("Loans")
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Copy");
-
-                    b.Navigation("User");
-                });
-
-            modelBuilder.Entity("backend.Models.Reservation", b =>
-                {
-                    b.HasOne("backend.Models.Book", "Book")
-                        .WithMany()
-                        .HasForeignKey("BookId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("backend.Models.Copy", "Copy")
-                        .WithOne("Reservation")
-                        .HasForeignKey("backend.Models.Reservation", "CopyId");
-
-                    b.HasOne("backend.Models.IssueCompartment", "IssueCompartment")
-                        .WithOne("IssueReservation")
-                        .HasForeignKey("backend.Models.Reservation", "IssueCompartmentId");
-
-                    b.HasOne("backend.Models.IssueCompartment", "ReturnCompartment")
-                        .WithOne("ReturnReservation")
-                        .HasForeignKey("backend.Models.Reservation", "ReturnCompartmentId");
-
-                    b.HasOne("backend.Models.User", "User")
-                        .WithMany("Reservations")
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Book");
-
-                    b.Navigation("Copy");
-
-                    b.Navigation("IssueCompartment");
-
-                    b.Navigation("ReturnCompartment");
-
-                    b.Navigation("User");
-                });
-
-            modelBuilder.Entity("Locker", b =>
-                {
-                    b.Navigation("IssueCompartment");
+                    b.Navigation("Publisher");
                 });
 
             modelBuilder.Entity("backend.Models.Author", b =>
                 {
                     b.Navigation("Books");
-                });
-
-            modelBuilder.Entity("backend.Models.Copy", b =>
-                {
-                    b.Navigation("Loan");
-
-                    b.Navigation("Reservation");
-                });
-
-            modelBuilder.Entity("backend.Models.IssueCompartment", b =>
-                {
-                    b.Navigation("IssueReservation");
-
-                    b.Navigation("ReturnReservation");
                 });
 
             modelBuilder.Entity("backend.Models.ParcelLocker", b =>
@@ -503,16 +271,9 @@ namespace backend.Data.Migrations
                     b.Navigation("Books");
                 });
 
-            modelBuilder.Entity("backend.Models.Reservation", b =>
+            modelBuilder.Entity("backend.Models.Publisher", b =>
                 {
-                    b.Navigation("LibraryTasks");
-                });
-
-            modelBuilder.Entity("backend.Models.User", b =>
-                {
-                    b.Navigation("Loans");
-
-                    b.Navigation("Reservations");
+                    b.Navigation("Books");
                 });
 #pragma warning restore 612, 618
         }

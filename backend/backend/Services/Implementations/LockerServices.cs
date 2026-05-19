@@ -9,9 +9,9 @@ namespace backend.Services.Implementations;
 
 public class LockerServices(LibraryDbContext dbContext) : ILockerServices
 {
-    
+
     private const string EntityName = "Locker";
-    
+
     public async Task<LockerDto> CreateAsync(Guid parcelLockerId, LockerCreateDto dto)
     {
         var lockerInDb = await dbContext.Lockers.FirstOrDefaultAsync(p => p.LocationCode.ToLower().Equals(dto.LocationCode.ToLower()));
@@ -21,8 +21,8 @@ public class LockerServices(LibraryDbContext dbContext) : ILockerServices
         }
 
         var parcelLockerInDb = await dbContext.ParcelLockers.FirstOrDefaultAsync(p => p.Id.Equals(parcelLockerId));
-        
-        if(parcelLockerInDb is null)
+
+        if (parcelLockerInDb is null)
         {
             throw new EntityNotFoundException("Parcel locker");
         }
@@ -42,7 +42,8 @@ public class LockerServices(LibraryDbContext dbContext) : ILockerServices
         await dbContext.Lockers.AddAsync(locker);
         await dbContext.SaveChangesAsync();
 
-        return new LockerDto{
+        return new LockerDto
+        {
             Id = locker.Id,
             LocationCode = locker.LocationCode,
             Height = locker.Height,
@@ -88,10 +89,10 @@ public class LockerServices(LibraryDbContext dbContext) : ILockerServices
 
     public async Task<LockerDto> UpdateAsync(Guid id, LockerUpdateDto dto)
     {
-        var Locker = await dbContext.Lockers.FirstOrDefaultAsync(p => p.Id.Equals(id)) 
+        var Locker = await dbContext.Lockers.FirstOrDefaultAsync(p => p.Id.Equals(id))
             ?? throw new KeyNotFoundException("Locker not found.");
 
-        if (!Locker.LocationCode.ToLower().Equals(dto.LocationCode.ToLower()) && 
+        if (!Locker.LocationCode.ToLower().Equals(dto.LocationCode.ToLower()) &&
             await dbContext.Lockers.AnyAsync(p => p.LocationCode.ToLower().Equals(dto.LocationCode.ToLower())))
         {
             throw new LockerByLocationCodeAlreadyExists(dto.LocationCode);
@@ -103,10 +104,11 @@ public class LockerServices(LibraryDbContext dbContext) : ILockerServices
         Locker.LocationCode = dto.LocationCode;
         Locker.ParcelLockerId = dto.ParcelLockerId;
         Locker.LockerState = dto.LockerState;
-        
+
         await dbContext.SaveChangesAsync();
 
-        return new LockerDto{
+        return new LockerDto
+        {
             Id = Locker.Id,
             LocationCode = Locker.LocationCode,
             Height = Locker.Height,
@@ -119,7 +121,7 @@ public class LockerServices(LibraryDbContext dbContext) : ILockerServices
 
     public async void Delete(Guid id)
     {
-        var Locker = await dbContext.Lockers.FirstOrDefaultAsync(p => p.Id.Equals(id)) 
+        var Locker = await dbContext.Lockers.FirstOrDefaultAsync(p => p.Id.Equals(id))
             ?? throw new EntityNotFoundException(EntityName);
 
         dbContext.Lockers.Remove(Locker);

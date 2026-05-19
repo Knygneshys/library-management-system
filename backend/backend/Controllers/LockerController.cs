@@ -17,7 +17,7 @@ public class LockerController(ILockerServices lockerServices) : ControllerBase
 
             return Ok(lockerId);
         }
-        catch(Exception ex)
+        catch (Exception ex)
         {
             return BadRequest(ex.Message);
         }
@@ -27,7 +27,7 @@ public class LockerController(ILockerServices lockerServices) : ControllerBase
     public async Task<IActionResult> GetAllLockers()
     {
         var Lockers = await lockerServices.GetAllAsync();
-        
+
         return Ok(Lockers);
     }
 
@@ -35,7 +35,7 @@ public class LockerController(ILockerServices lockerServices) : ControllerBase
     public async Task<IActionResult> GetLockersByParcelLocker(Guid parcelLockerId)
     {
         var Lockers = await lockerServices.GetLockersByParcelLockerAsync(parcelLockerId);
-        
+
         return Ok(Lockers);
     }
 

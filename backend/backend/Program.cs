@@ -1,4 +1,7 @@
 using backend.Data;
+using backend.Data.Seeding;
+using backend.Data.Seeding.Seeders;
+using backend.Services;
 using backend.Services.Implementations;
 using backend.Services.Interfaces;
 using Microsoft.EntityFrameworkCore;
@@ -35,6 +38,19 @@ builder.Services.AddScoped<IAuthorServices, AuthorServices>();
 builder.Services.AddScoped<IParcelLockerServices, ParcelLockerServices>();
 builder.Services.AddScoped<ILockerServices, LockerServices>();
 builder.Services.AddScoped<IPrintingHouseServices, PrintingHouseServices>();
+builder.Services.AddScoped<IBookServices, BookServices>();
+builder.Services.AddScoped<IReservationServices, ReservationServices>();
+
+builder.Services.AddScoped<ISeeder, PrintingHouseSeeder>();
+builder.Services.AddScoped<ISeeder, PublisherSeeder>();
+builder.Services.AddScoped<ISeeder, AuthorSeeder>();
+builder.Services.AddScoped<ISeeder, GenreSeeder>();
+builder.Services.AddScoped<ISeeder, BookSeeder>();
+builder.Services.AddScoped<ISeeder, CopySeeder>();
+builder.Services.AddScoped<ISeeder, ReservationSeeder>();
+builder.Services.AddScoped<ISeeder, LoanSeeder>();
+
+builder.Services.AddScoped<ApplicationSeeder>();
 
 var app = builder.Build();
 
@@ -44,12 +60,15 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 
-    using var scope = app.Services.CreateAsyncScope();
+    await using var scope = app.Services.CreateAsyncScope();
     var dbContext = scope.ServiceProvider.GetService<LibraryDbContext>();
-    
+
     if (dbContext is not null)
     {
         dbContext.Database.Migrate();
+
+        var seeder = scope.ServiceProvider.GetRequiredService<ApplicationSeeder>();
+        await seeder.SeedAllAsync(dbContext, scope.ServiceProvider);
     }
 }
 

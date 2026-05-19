@@ -6,7 +6,7 @@ public class AuthorHasBookException : Exception
     {
     }
 
-    public AuthorHasBookException(string name) 
+    public AuthorHasBookException(string name)
         : base($"{name} has books and therefore cannot be deleted!")
     {
     }
