@@ -15,4 +15,7 @@ public class Locker
     // TODO: Implement Issue compartment 
     // public Guid IssueCompartmentId { get; set; }
     // public IssueCompartment IssueCompartment { get; set; }
+    public IssueCompartment? IssueCompartment { get; set; }
+
+    public bool IsDoorClosed { get; set; } = true;
 }
