@@ -6,6 +6,12 @@ interface BookReservationDto {
   state: ReservationState;
 }
 
+interface BookCopyDto {
+  id: Guid;
+  code: string;
+  isTaken: boolean;
+}
+
 export type Book = {
   id: Guid;
   title: string;
@@ -18,4 +24,6 @@ export type Book = {
   genres: string[];
   publisher: string;
   activeReservation: BookReservationDto | null;
+  copies: BookCopyDto[];
+  freeCopyCount: number;
 };

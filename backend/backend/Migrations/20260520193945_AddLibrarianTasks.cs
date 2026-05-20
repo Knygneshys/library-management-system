@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace backend.Migrations
 {
     /// <inheritdoc />
-    public partial class InitialMerged : Migration
+    public partial class AddLibrarianTasks : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -81,31 +81,16 @@ namespace backend.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "User",
-                columns: table => new
-                {
-                    Id = table.Column<Guid>(type: "TEXT", nullable: false),
-                    FullName = table.Column<string>(type: "TEXT", nullable: false),
-                    Email = table.Column<string>(type: "TEXT", nullable: false),
-                    Deactivated = table.Column<bool>(type: "INTEGER", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_User", x => x.Id);
-                });
-
-            migrationBuilder.CreateTable(
                 name: "Lockers",
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "TEXT", nullable: false),
-                    LocationCode = table.Column<string>(type: "TEXT", nullable: true),
+                    LocationCode = table.Column<string>(type: "TEXT", nullable: false),
                     Height = table.Column<double>(type: "REAL", nullable: false),
                     Width = table.Column<double>(type: "REAL", nullable: false),
                     Length = table.Column<double>(type: "REAL", nullable: false),
                     LockerState = table.Column<int>(type: "INTEGER", nullable: false),
                     ParcelLockerId = table.Column<Guid>(type: "TEXT", nullable: false),
-                    IssueCompartmentId = table.Column<Guid>(type: "TEXT", nullable: false),
                     IsDoorClosed = table.Column<bool>(type: "INTEGER", nullable: false)
                 },
                 constraints: table =>
@@ -157,28 +142,7 @@ namespace backend.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "IssueCompartments",
-                columns: table => new
-                {
-                    Id = table.Column<Guid>(type: "TEXT", nullable: false),
-                    InsertionDate = table.Column<DateTime>(type: "TEXT", nullable: false),
-                    PinCodeLibrarian = table.Column<string>(type: "TEXT", nullable: true),
-                    PinCodeReader = table.Column<string>(type: "TEXT", nullable: true),
-                    LockerId = table.Column<Guid>(type: "TEXT", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_IssueCompartments", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_IssueCompartments_Lockers_LockerId",
-                        column: x => x.LockerId,
-                        principalTable: "Lockers",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "BookGenre",
+                name: "BookGenres",
                 columns: table => new
                 {
                     BooksId = table.Column<Guid>(type: "TEXT", nullable: false),
@@ -186,15 +150,15 @@ namespace backend.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_BookGenre", x => new { x.BooksId, x.GenresId });
+                    table.PrimaryKey("PK_BookGenres", x => new { x.BooksId, x.GenresId });
                     table.ForeignKey(
-                        name: "FK_BookGenre_Books_BooksId",
+                        name: "FK_BookGenres_Books_BooksId",
                         column: x => x.BooksId,
                         principalTable: "Books",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_BookGenre_Genres_GenresId",
+                        name: "FK_BookGenres_Genres_GenresId",
                         column: x => x.GenresId,
                         principalTable: "Genres",
                         principalColumn: "Id",
@@ -206,8 +170,8 @@ namespace backend.Migrations
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "TEXT", nullable: false),
-                    IsTaken = table.Column<bool>(type: "INTEGER", nullable: false),
                     Code = table.Column<string>(type: "TEXT", nullable: false),
+                    IsTaken = table.Column<bool>(type: "INTEGER", nullable: false),
                     BookId = table.Column<Guid>(type: "TEXT", nullable: false)
                 },
                 constraints: table =>
@@ -230,12 +194,9 @@ namespace backend.Migrations
                     IsExtended = table.Column<bool>(type: "INTEGER", nullable: false),
                     DueDate = table.Column<DateTime>(type: "TEXT", nullable: false),
                     WantsToReturn = table.Column<bool>(type: "INTEGER", nullable: false),
-                    BookId = table.Column<Guid>(type: "TEXT", nullable: false),
-                    CopyId = table.Column<Guid>(type: "TEXT", nullable: true),
                     State = table.Column<int>(type: "INTEGER", nullable: false),
-                    IssueCompartmentId = table.Column<Guid>(type: "TEXT", nullable: true),
-                    ReturnCompartmentId = table.Column<Guid>(type: "TEXT", nullable: true),
-                    UserId = table.Column<Guid>(type: "TEXT", nullable: false)
+                    CopyId = table.Column<Guid>(type: "TEXT", nullable: true),
+                    BookId = table.Column<Guid>(type: "TEXT", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -251,38 +212,52 @@ namespace backend.Migrations
                         column: x => x.CopyId,
                         principalTable: "Copies",
                         principalColumn: "Id");
+                });
+
+            migrationBuilder.CreateTable(
+                name: "IssueCompartments",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "TEXT", nullable: false),
+                    Type = table.Column<int>(type: "INTEGER", nullable: false),
+                    PinCodeReader = table.Column<string>(type: "TEXT", nullable: false),
+                    PinCodeLibrarian = table.Column<string>(type: "TEXT", nullable: false),
+                    LockerId = table.Column<Guid>(type: "TEXT", nullable: false),
+                    ReservationId = table.Column<Guid>(type: "TEXT", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_IssueCompartments", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Reservations_IssueCompartments_IssueCompartmentId",
-                        column: x => x.IssueCompartmentId,
-                        principalTable: "IssueCompartments",
-                        principalColumn: "Id");
+                        name: "FK_IssueCompartments_Lockers_LockerId",
+                        column: x => x.LockerId,
+                        principalTable: "Lockers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_Reservations_IssueCompartments_ReturnCompartmentId",
-                        column: x => x.ReturnCompartmentId,
-                        principalTable: "IssueCompartments",
-                        principalColumn: "Id");
-                    table.ForeignKey(
-                        name: "FK_Reservations_User_UserId",
-                        column: x => x.UserId,
-                        principalTable: "User",
+                        name: "FK_IssueCompartments_Reservations_ReservationId",
+                        column: x => x.ReservationId,
+                        principalTable: "Reservations",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
-                name: "LibraryTasks",
+                name: "LibrarianTasks",
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "TEXT", nullable: false),
-                    IsIssueTask = table.Column<bool>(type: "INTEGER", nullable: false),
+                    Type = table.Column<int>(type: "INTEGER", nullable: false),
+                    CreatedAt = table.Column<DateTime>(type: "TEXT", nullable: false),
                     IsDone = table.Column<bool>(type: "INTEGER", nullable: false),
+                    IsIssueTask = table.Column<bool>(type: "INTEGER", nullable: false),
                     ReservationId = table.Column<Guid>(type: "TEXT", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_LibraryTasks", x => x.Id);
+                    table.PrimaryKey("PK_LibrarianTasks", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_LibraryTasks_Reservations_ReservationId",
+                        name: "FK_LibrarianTasks_Reservations_ReservationId",
                         column: x => x.ReservationId,
                         principalTable: "Reservations",
                         principalColumn: "Id",
@@ -297,8 +272,7 @@ namespace backend.Migrations
                     LoanDate = table.Column<DateTime>(type: "TEXT", nullable: false),
                     ReturnDate = table.Column<DateTime>(type: "TEXT", nullable: false),
                     CopyId = table.Column<Guid>(type: "TEXT", nullable: false),
-                    ReservationId = table.Column<Guid>(type: "TEXT", nullable: false),
-                    UserId = table.Column<Guid>(type: "TEXT", nullable: false)
+                    ReservationId = table.Column<Guid>(type: "TEXT", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -315,12 +289,6 @@ namespace backend.Migrations
                         principalTable: "Reservations",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_Loans_User_UserId",
-                        column: x => x.UserId,
-                        principalTable: "User",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateIndex(
@@ -330,8 +298,8 @@ namespace backend.Migrations
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_BookGenre_GenresId",
-                table: "BookGenre",
+                name: "IX_BookGenres_GenresId",
+                table: "BookGenres",
                 column: "GenresId");
 
             migrationBuilder.CreateIndex(
@@ -361,14 +329,25 @@ namespace backend.Migrations
                 column: "BookId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_IssueCompartments_LockerId",
-                table: "IssueCompartments",
-                column: "LockerId",
+                name: "IX_Genres_Title",
+                table: "Genres",
+                column: "Title",
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_LibraryTasks_ReservationId",
-                table: "LibraryTasks",
+                name: "IX_IssueCompartments_LockerId",
+                table: "IssueCompartments",
+                column: "LockerId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_IssueCompartments_ReservationId",
+                table: "IssueCompartments",
+                column: "ReservationId",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_LibrarianTasks_ReservationId",
+                table: "LibrarianTasks",
                 column: "ReservationId");
 
             migrationBuilder.CreateIndex(
@@ -382,11 +361,6 @@ namespace backend.Migrations
                 table: "Loans",
                 column: "ReservationId",
                 unique: true);
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Loans_UserId",
-                table: "Loans",
-                column: "UserId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Lockers_LocationCode",
@@ -412,6 +386,12 @@ namespace backend.Migrations
                 unique: true);
 
             migrationBuilder.CreateIndex(
+                name: "IX_Publishers_Name",
+                table: "Publishers",
+                column: "Name",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Reservations_BookId",
                 table: "Reservations",
                 column: "BookId");
@@ -419,35 +399,20 @@ namespace backend.Migrations
             migrationBuilder.CreateIndex(
                 name: "IX_Reservations_CopyId",
                 table: "Reservations",
-                column: "CopyId",
-                unique: true);
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Reservations_IssueCompartmentId",
-                table: "Reservations",
-                column: "IssueCompartmentId",
-                unique: true);
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Reservations_ReturnCompartmentId",
-                table: "Reservations",
-                column: "ReturnCompartmentId",
-                unique: true);
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Reservations_UserId",
-                table: "Reservations",
-                column: "UserId");
+                column: "CopyId");
         }
 
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
-                name: "BookGenre");
+                name: "BookGenres");
 
             migrationBuilder.DropTable(
-                name: "LibraryTasks");
+                name: "IssueCompartments");
+
+            migrationBuilder.DropTable(
+                name: "LibrarianTasks");
 
             migrationBuilder.DropTable(
                 name: "Loans");
@@ -456,22 +421,19 @@ namespace backend.Migrations
                 name: "Genres");
 
             migrationBuilder.DropTable(
+                name: "Lockers");
+
+            migrationBuilder.DropTable(
                 name: "Reservations");
+
+            migrationBuilder.DropTable(
+                name: "ParcelLockers");
 
             migrationBuilder.DropTable(
                 name: "Copies");
 
             migrationBuilder.DropTable(
-                name: "IssueCompartments");
-
-            migrationBuilder.DropTable(
-                name: "User");
-
-            migrationBuilder.DropTable(
                 name: "Books");
-
-            migrationBuilder.DropTable(
-                name: "Lockers");
 
             migrationBuilder.DropTable(
                 name: "Authors");
@@ -481,9 +443,6 @@ namespace backend.Migrations
 
             migrationBuilder.DropTable(
                 name: "Publishers");
-
-            migrationBuilder.DropTable(
-                name: "ParcelLockers");
         }
     }
 }

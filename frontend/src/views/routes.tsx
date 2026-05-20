@@ -6,6 +6,8 @@ import HistoryEduIcon from "@mui/icons-material/HistoryEdu";
 import HomeIcon from "@mui/icons-material/Home";
 import BookPage from "./pages/BookPage/BookPage";
 import BookIcon from "@mui/icons-material/Book";
+import TaskPage from "./pages/TaskPage/TaskPage";
+import TaskIcon from "@mui/icons-material/Task";
 import ParcelMachinePage from "./pages/ParcelMachinePage/ParcelMachinePage";
 
 export const routes = [
@@ -38,6 +40,12 @@ export const routes = [
     component: BookPage,
     name: "Books",
     icon: <BookIcon sx={{ fontSize: sidebarIconSize }} />,
+  },
+  {
+    route: "/tasks",
+    component: TaskPage,
+    name: "Tasks",
+    icon: <TaskIcon sx={{ fontSize: sidebarIconSize }} />,
   },
   {
     route: "/parcelmachine",

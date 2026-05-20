@@ -10,7 +10,11 @@ import {
 } from "@mui/material";
 import type { Book } from "../../../../entities/Book";
 import { ReservationState } from "../../../../entities/enums/ReservationState";
-import { returnBook } from "../../../../external-api-clients/clients/externalReservationApiClient";
+import {
+  returnBook,
+  reserveBook,
+  goToQueue,
+} from "../../../../external-api-clients/clients/externalReservationApiClient";
 import { useState } from "react";
 import toast from "react-hot-toast";
 import {
@@ -32,12 +36,20 @@ export default function BookDetailsModal({
   onBookReturned,
 }: Props) {
   const [isReturning, setIsReturning] = useState(false);
+  const [isReserving, setIsReserving] = useState(false);
+  const [isQueueing, setIsQueueing] = useState(false);
 
   if (!book) return null;
 
-  const canReturn =
-    book.activeReservation?.state === ReservationState.NotLate ||
-    book.activeReservation?.state === ReservationState.Late;
+  console.log(book);
+
+  const canReturn = false;
+  //book.activeReservation?.state === ReservationState.NotLate ||
+  //book.activeReservation?.state === ReservationState.Late;
+
+  const canReserve = book.freeCopyCount > 0;
+
+  const canGoToQueue = book.freeCopyCount === 0 && !canReturn;
 
   const handleReturnBook = async () => {
     if (!book.activeReservation) return;
@@ -52,6 +64,43 @@ export default function BookDetailsModal({
       handleErrorToast(error);
     } finally {
       setIsReturning(false);
+    }
+  };
+
+  const handleReserveBook = async () => {
+    try {
+      setIsReserving(true);
+
+      const wasReserved = await reserveBook(book.id.toString());
+
+      if (!wasReserved) {
+        toast.error("No free copies available");
+        return;
+      }
+
+      toast.success(successfullUpdateMessage("Book reserved"));
+      await onBookReturned();
+      handleClose();
+    } catch (error) {
+      handleErrorToast(error);
+    } finally {
+      setIsReserving(false);
+    }
+  };
+
+  const handleGoToQueue = async () => {
+    try {
+      setIsQueueing(true);
+
+      await goToQueue(book.id.toString());
+
+      toast.success(successfullUpdateMessage("Added to queue"));
+      await onBookReturned();
+      handleClose();
+    } catch (error) {
+      handleErrorToast(error);
+    } finally {
+      setIsQueueing(false);
     }
   };
 
@@ -137,6 +186,45 @@ export default function BookDetailsModal({
             </Typography>
           </Box>
 
+          <Box>
+            <Typography variant="subtitle2" color="textSecondary">
+              Copies
+            </Typography>
+
+            <Typography variant="body2" sx={{ mt: 1 }}>
+              Available copies: {book.freeCopyCount} /{" "}
+              {book.copies?.length ?? 0}
+            </Typography>
+
+            <Stack spacing={1} sx={{ mt: 1 }}>
+              {book.copies && book.copies.length > 0 ? (
+                book.copies.map((copy) => (
+                  <Box
+                    key={copy.id.toString()}
+                    sx={{
+                      display: "flex",
+                      justifyContent: "space-between",
+                      alignItems: "center",
+                    }}
+                  >
+                    <Typography variant="body2">{copy.code}</Typography>
+
+                    <Chip
+                      label={copy.isTaken ? "Taken" : "Available"}
+                      color={copy.isTaken ? "error" : "success"}
+                      size="small"
+                      variant="outlined"
+                    />
+                  </Box>
+                ))
+              ) : (
+                <Typography variant="body2" color="textSecondary">
+                  No copies available
+                </Typography>
+              )}
+            </Stack>
+          </Box>
+
           {book.activeReservation !== null && (
             <Box>
               <Typography variant="subtitle2" color="textSecondary">
@@ -148,38 +236,52 @@ export default function BookDetailsModal({
             </Box>
           )}
 
-          {canReturn && (
-            <Stack direction="row" spacing={2} sx={{ mt: 2 }}>
+          <Stack direction="row" spacing={2} sx={{ mt: 2 }}>
+            {canReserve && (
+              <Button
+                variant="contained"
+                color="primary"
+                onClick={handleReserveBook}
+                disabled={isReturning || isReserving || isQueueing}
+                fullWidth
+              >
+                Reserve
+              </Button>
+            )}
+
+            {canGoToQueue && (
+              <Button
+                variant="contained"
+                color="primary"
+                onClick={handleGoToQueue}
+                disabled={isReturning || isReserving || isQueueing}
+                fullWidth
+              >
+                Join Queue
+              </Button>
+            )}
+
+            {canReturn && (
               <Button
                 variant="contained"
                 color="primary"
                 onClick={handleReturnBook}
-                disabled={isReturning}
+                disabled={isReturning || isReserving || isQueueing}
                 fullWidth
               >
                 Return
               </Button>
-              <Button
-                variant="outlined"
-                onClick={handleClose}
-                fullWidth
-                disabled={isReturning}
-              >
-                Close
-              </Button>
-            </Stack>
-          )}
+            )}
 
-          {!canReturn && (
             <Button
               variant="outlined"
               onClick={handleClose}
+              disabled={isReturning || isReserving || isQueueing}
               fullWidth
-              sx={{ mt: 2 }}
             >
               Close
             </Button>
-          )}
+          </Stack>
         </Box>
       </DialogContent>
     </Dialog>

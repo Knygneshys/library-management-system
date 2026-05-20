@@ -1,8 +1,5 @@
 using backend.Models;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Metadata.Internal;
-using System.Reflection.Emit;
-using static System.Net.WebRequestMethods;
 
 namespace backend.Data;
 
@@ -19,7 +16,8 @@ public class LibraryDbContext(DbContextOptions<LibraryDbContext> options) : DbCo
     public DbSet<Loan> Loans { get; set; }
     public DbSet<Reservation> Reservations { get; set; }
     public DbSet<IssueCompartment> IssueCompartments { get; set; }
-    public DbSet<LibraryTask> LibraryTasks { get; set; }
+    
+    public DbSet<LibrarianTask> LibrarianTasks { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -63,24 +61,35 @@ public class LibraryDbContext(DbContextOptions<LibraryDbContext> options) : DbCo
                 .HasForeignKey(b => b.PublisherId)
                 .IsRequired();
 
+        // Book - Copy (1 to 0..*)
         modelBuilder.Entity<Copy>()
                 .HasOne(c => c.Book)
                 .WithMany(b => b.Copies)
                 .HasForeignKey(c => c.BookId)
                 .IsRequired();
 
+        // Copy - Reservation (1 to 0..*)
+        modelBuilder.Entity<Reservation>()
+                .HasOne(r => r.Copy)
+                .WithMany()
+                .HasForeignKey(r => r.CopyId)
+                .IsRequired(false);
+
+        // Copy - Loan (1 to 0..1): Loan requires a Copy (1), Copy can have 0..1 Loan
         modelBuilder.Entity<Loan>()
                 .HasOne(l => l.Copy)
                 .WithOne(c => c.Loan)
                 .HasForeignKey<Loan>(l => l.CopyId)
                 .IsRequired();
 
+        // Loan - Reservation (0..1 to 1): Loan must have Reservation (1), Reservation can have 0..1 Loan
         modelBuilder.Entity<Loan>()
                 .HasOne(l => l.Reservation)
                 .WithOne(r => r.Loan)
                 .HasForeignKey<Loan>(l => l.ReservationId)
                 .IsRequired();
 
+        // Book - Reservation (1 to 0..*)
         modelBuilder.Entity<Reservation>()
                 .HasOne(r => r.Book)
                 .WithMany(b => b.Reservations)
@@ -91,42 +100,35 @@ public class LibraryDbContext(DbContextOptions<LibraryDbContext> options) : DbCo
                 .HasIndex(a => a.Name)
                 .IsUnique();
 
+        modelBuilder.Entity<Genre>()
+                .HasIndex(g => g.Title)
+                .IsUnique();
+
+        modelBuilder.Entity<Publisher>()
+                .HasIndex(p => p.Name)
+                .IsUnique();
+
+        modelBuilder.Entity<Book>()
+                .HasMany(b => b.Genres)
+                .WithMany(g => g.Books)
+                .UsingEntity(join => join.ToTable("BookGenres"));
 
         modelBuilder.Entity<IssueCompartment>()
-                .HasOne(i => i.Locker)
-                .WithOne(l => l.IssueCompartment)
-                .HasForeignKey<IssueCompartment>(i => i.LockerId)
+                .HasOne(ic => ic.Locker)
+                .WithMany(l => l.IssueCompartments)
+                .HasForeignKey(ic => ic.LockerId)
                 .IsRequired();
 
-        modelBuilder.Entity<Reservation>()
-                .HasOne(r => r.IssueCompartment)
-                .WithOne(i => i.IssueReservation)
-                .HasForeignKey<Reservation>(r => r.IssueCompartmentId)
-                .IsRequired(false); 
-
-        modelBuilder.Entity<Reservation>()
-                .HasOne(r => r.ReturnCompartment)
-                .WithOne(i => i.ReturnReservation)
-                .HasForeignKey<Reservation>(r => r.ReturnCompartmentId)
-                .IsRequired(false);
-
-        modelBuilder.Entity<Loan>()
-                .HasOne(l => l.Copy)
-                .WithOne(c => c.Loan)
-                .HasForeignKey<Loan>(l => l.CopyId)
+        modelBuilder.Entity<IssueCompartment>()
+                .HasOne(ic => ic.Reservation)
+                .WithOne(r => r.IssueCompartment)
+                .HasForeignKey<IssueCompartment>(ic => ic.ReservationId)
                 .IsRequired();
 
-        modelBuilder.Entity<Reservation>()
-                .HasOne(r => r.Copy)
-                .WithOne(c => c.Reservation)
-                .HasForeignKey<Reservation>(r => r.CopyId)
-                .IsRequired(false);
-
-        modelBuilder.Entity<LibraryTask>()
+        modelBuilder.Entity<LibrarianTask>()
                 .HasOne(t => t.Reservation)
-                .WithMany(r => r.LibraryTasks)
+                .WithMany(r => r.LibrarianTasks)
                 .HasForeignKey(t => t.ReservationId)
                 .IsRequired();
-
     }
 }

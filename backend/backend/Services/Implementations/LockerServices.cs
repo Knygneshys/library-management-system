@@ -133,14 +133,12 @@ public class LockerServices(LibraryDbContext dbContext) : ILockerServices
     public async Task<LockerDto?> GetLockerByCodeAsync(string pinCode)
     {
         var locker = await dbContext.Lockers
-            .Include(l => l.IssueCompartment)
-            .FirstOrDefaultAsync(l => l.IssueCompartment != null &&
-                (l.IssueCompartment.PinCodeReader == pinCode ||
-                 l.IssueCompartment.PinCodeLibrarian == pinCode));
+            .Include(l => l.IssueCompartments)
+            .FirstOrDefaultAsync(l => l.IssueCompartments.Any(ic => ic.PinCodeReader == pinCode || ic.PinCodeLibrarian == pinCode));
 
         if (locker == null)
         {
-            return null; 
+            return null;
         }
 
         return new LockerDto
@@ -186,7 +184,7 @@ public class LockerServices(LibraryDbContext dbContext) : ILockerServices
     public async Task ResetLockerAsync(Guid lockerId, string pinCode)
     {
         var locker = await dbContext.Lockers
-            .Include(l => l.IssueCompartment)
+            .Include(l => l.IssueCompartments)
             .FirstOrDefaultAsync(l => l.Id == lockerId)
             ?? throw new EntityNotFoundException(EntityName);
 
@@ -198,7 +196,7 @@ public class LockerServices(LibraryDbContext dbContext) : ILockerServices
         if (issueCompartment.PinCodeReader == pinCode)
         {
             var reservation = await dbContext.Reservations
-                .FirstOrDefaultAsync(r => r.IssueCompartmentId == issueCompartment.Id);
+                .FirstOrDefaultAsync(r => r.IssueCompartment != null && r.IssueCompartment.Id == issueCompartment.Id);
 
             if (reservation != null)
             {
@@ -212,8 +210,8 @@ public class LockerServices(LibraryDbContext dbContext) : ILockerServices
         else if (issueCompartment.PinCodeLibrarian == pinCode)
         {
             var reservation = await dbContext.Reservations
-                .Include(r => r.LibraryTasks)
-                .FirstOrDefaultAsync(r => r.IssueCompartmentId == issueCompartment.Id);
+                .Include(r => r.LibrarianTasks)
+                .FirstOrDefaultAsync(r => r.IssueCompartment != null && r.IssueCompartment.Id == issueCompartment.Id);
 
             if (reservation != null && reservation.CopyId.HasValue)
             {
@@ -226,7 +224,7 @@ public class LockerServices(LibraryDbContext dbContext) : ILockerServices
                 }
 
                 // pazymeti is_done true
-                var task = reservation.LibraryTasks.FirstOrDefault(t => t.IsIssueTask == false && t.IsDone == false);
+                var task = reservation.LibrarianTasks.FirstOrDefault(t => t.IsIssueTask == false && t.IsDone == false);
                 if (task != null)
                 {
                     task.UpdateTask();

@@ -21,4 +21,39 @@ public class ReservationController(IReservationServices reservationServices) : C
             return BadRequest(ex.Message);
         }
     }
+
+    [HttpPost("reserve/{bookId:guid}")]
+    public async Task<IActionResult> ReserveCopyAsync(Guid bookId)
+    {
+        try
+        {
+            var result = await reservationServices.ReserveCopyAsync(bookId);
+
+            if (!result)
+            {
+                return BadRequest("No free copies available.");
+            }
+
+            return Ok(result);
+        }
+        catch (Exception ex)
+        {
+            return BadRequest(ex.Message);
+        }
+    }
+
+    [HttpPost("queue/{bookId:guid}")]
+    public async Task<IActionResult> StayInQueueAsync(Guid bookId)
+    {
+        try
+        {
+            var result = await reservationServices.GoToQueueAsync(bookId);
+
+            return Ok(result);
+        }
+        catch (Exception ex)
+        {
+            return BadRequest(ex.Message);
+        }
+    }
 }
