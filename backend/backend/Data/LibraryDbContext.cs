@@ -67,6 +67,13 @@ public class LibraryDbContext(DbContextOptions<LibraryDbContext> options) : DbCo
                 .HasForeignKey(c => c.BookId)
                 .IsRequired();
 
+        // Copy - Reservation (1 to 0..*)
+        modelBuilder.Entity<Reservation>()
+                .HasOne(r => r.Copy)
+                .WithMany()
+                .HasForeignKey(r => r.CopyId)
+                .IsRequired(false);
+
         // Copy - Loan (1 to 0..1): Loan requires a Copy (1), Copy can have 0..1 Loan
         modelBuilder.Entity<Loan>()
                 .HasOne(l => l.Copy)
@@ -119,8 +126,8 @@ public class LibraryDbContext(DbContextOptions<LibraryDbContext> options) : DbCo
         
         modelBuilder.Entity<LibrarianTask>()
                 .HasOne(t => t.Reservation)
-                .WithOne(r => r.LibrarianTask)
-                .HasForeignKey<LibrarianTask>(t => t.ReservationId)
+                .WithMany(r => r.LibrarianTasks)
+                .HasForeignKey(t => t.ReservationId)
                 .IsRequired();
     }
 }

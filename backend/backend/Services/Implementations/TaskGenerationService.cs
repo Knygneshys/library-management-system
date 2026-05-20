@@ -11,74 +11,91 @@ public class TaskGenerationService(LibraryDbContext dbContext) : ITaskGeneration
     public async Task GenerateTasksAsync(CancellationToken cancellationToken)
     {
         var reservations = await dbContext.Reservations
-            .Include(r => r.LibrarianTask)
-            .Where(r => r.LibrarianTask == null)
+            .Include(r => r.LibrarianTasks)
+            .Include(r => r.IssueCompartment)
+            .Where(r =>
+                !r.LibrarianTasks.Any() &&
+                r.IssueCompartment == null &&
+                (
+                    r.State == ReservationState.InQueue ||
+                    r.State == ReservationState.InProgress ||
+                    r.WantsToReturn
+                ))
             .ToListAsync(cancellationToken);
 
         var freeLockers = await dbContext.Lockers
             .Where(l => l.LockerState == LockerState.Empty)
             .ToListAsync(cancellationToken);
 
-        var random = new Random();
-
         foreach (var reservation in reservations)
         {
             if (freeLockers.Count == 0)
                 break;
 
-            var randomIndex = random.Next(freeLockers.Count);
+            var randomIndex = Random.Shared.Next(freeLockers.Count);
             var freeLocker = freeLockers[randomIndex];
             freeLockers.RemoveAt(randomIndex);
 
-            var pin = GeneratePin();
-
-            if (reservation.State == ReservationState.InQueue)
+            if (reservation.State == ReservationState.InQueue ||
+                reservation.State == ReservationState.InProgress)
             {
-                dbContext.IssueCompartments.Add(new IssueCompartment
-                {
-                    Id = Guid.NewGuid(),
-                    Type = IssueCompartmentType.Issue,
-                    Pin = pin,
-                    LockerId = freeLocker.Id,
-                    ReservationId = reservation.Id,
-                });
-
-                freeLocker.LockerState = LockerState.Occupied;
-
-                dbContext.LibrarianTasks.Add(new LibrarianTask
-                {
-                    Id = Guid.NewGuid(),
-                    Type = LibrarianTaskType.Issue,
-                    CreatedAt = DateTime.UtcNow,
-                    ReservationId = reservation.Id,
-                });
+                CreateIssueTask(reservation, freeLocker);
             }
             else if (reservation.WantsToReturn)
             {
-                dbContext.IssueCompartments.Add(new IssueCompartment
-                {
-                    Id = Guid.NewGuid(),
-                    Type = IssueCompartmentType.Return,
-                    Pin = pin,
-                    LockerId = freeLocker.Id,
-                    ReservationId = reservation.Id,
-                });
-
-                freeLocker.LockerState = LockerState.Occupied;
-
-                dbContext.LibrarianTasks.Add(new LibrarianTask
-                {
-                    Id = Guid.NewGuid(),
-                    Type = LibrarianTaskType.Return,
-                    CreatedAt = DateTime.UtcNow,
-                    ReservationId = reservation.Id,
-                });
+                CreateReturnTask(reservation, freeLocker);
             }
         }
 
         await dbContext.SaveChangesAsync(cancellationToken);
     }
 
+    private void CreateIssueTask(Reservation reservation, Locker freeLocker)
+    {
+        dbContext.IssueCompartments.Add(new IssueCompartment
+        {
+            Id = Guid.NewGuid(),
+            Type = IssueCompartmentType.Issue,
+            PinCodeReader = GeneratePin(),
+            PinCodeLibrarian = GeneratePin(),
+            LockerId = freeLocker.Id,
+            ReservationId = reservation.Id,
+        });
+
+        freeLocker.LockerState = LockerState.Occupied;
+
+        dbContext.LibrarianTasks.Add(new LibrarianTask
+        {
+            Id = Guid.NewGuid(),
+            Type = LibrarianTaskType.Issue,
+            CreatedAt = DateTime.UtcNow,
+            ReservationId = reservation.Id,
+        });
+    }
+
+    private void CreateReturnTask(Reservation reservation, Locker freeLocker)
+    {
+        dbContext.IssueCompartments.Add(new IssueCompartment
+        {
+            Id = Guid.NewGuid(),
+            Type = IssueCompartmentType.Return,
+            PinCodeReader = GeneratePin(),
+            PinCodeLibrarian = GeneratePin(),
+            LockerId = freeLocker.Id,
+            ReservationId = reservation.Id,
+        });
+
+        freeLocker.LockerState = LockerState.Occupied;
+
+        dbContext.LibrarianTasks.Add(new LibrarianTask
+        {
+            Id = Guid.NewGuid(),
+            Type = LibrarianTaskType.Return,
+            CreatedAt = DateTime.UtcNow,
+            ReservationId = reservation.Id,
+        });
+    }
+
     private static string GeneratePin() =>
-        Random.Shared.Next(1000, 9999).ToString();
+        Random.Shared.Next(1000, 10000).ToString();
 }

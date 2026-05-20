@@ -11,8 +11,8 @@ using backend.Data;
 namespace backend.Migrations
 {
     [DbContext(typeof(LibraryDbContext))]
-    [Migration("20260519174534_AddMissingLibraryTables")]
-    partial class AddMissingLibraryTables
+    [Migration("20260520171505_SyncModelFinal")]
+    partial class SyncModelFinal
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -43,6 +43,9 @@ namespace backend.Migrations
 
                     b.Property<double>("Height")
                         .HasColumnType("REAL");
+
+                    b.Property<bool>("IsDoorClosed")
+                        .HasColumnType("INTEGER");
 
                     b.Property<double>("Length")
                         .HasColumnType("REAL");
@@ -185,6 +188,67 @@ namespace backend.Migrations
                     b.ToTable("Genres");
                 });
 
+            modelBuilder.Entity("backend.Models.IssueCompartment", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("TEXT");
+
+                    b.Property<Guid>("LockerId")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("PinCodeLibrarian")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("PinCodeReader")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<Guid>("ReservationId")
+                        .HasColumnType("TEXT");
+
+                    b.Property<int>("Type")
+                        .HasColumnType("INTEGER");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("LockerId");
+
+                    b.HasIndex("ReservationId")
+                        .IsUnique();
+
+                    b.ToTable("IssueCompartments");
+                });
+
+            modelBuilder.Entity("backend.Models.LibrarianTask", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("TEXT");
+
+                    b.Property<bool>("IsDone")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<bool>("IsIssueTask")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<Guid>("ReservationId")
+                        .HasColumnType("TEXT");
+
+                    b.Property<int>("Type")
+                        .HasColumnType("INTEGER");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ReservationId");
+
+                    b.ToTable("LibrarianTasks");
+                });
+
             modelBuilder.Entity("backend.Models.Loan", b =>
                 {
                     b.Property<Guid>("Id")
@@ -304,6 +368,9 @@ namespace backend.Migrations
                     b.Property<Guid>("BookId")
                         .HasColumnType("TEXT");
 
+                    b.Property<Guid?>("CopyId")
+                        .HasColumnType("TEXT");
+
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("TEXT");
 
@@ -322,6 +389,8 @@ namespace backend.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("BookId");
+
+                    b.HasIndex("CopyId");
 
                     b.ToTable("Reservations");
                 });
@@ -390,6 +459,36 @@ namespace backend.Migrations
                     b.Navigation("Book");
                 });
 
+            modelBuilder.Entity("backend.Models.IssueCompartment", b =>
+                {
+                    b.HasOne("Locker", "Locker")
+                        .WithMany("IssueCompartments")
+                        .HasForeignKey("LockerId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("backend.Models.Reservation", "Reservation")
+                        .WithOne("IssueCompartment")
+                        .HasForeignKey("backend.Models.IssueCompartment", "ReservationId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Locker");
+
+                    b.Navigation("Reservation");
+                });
+
+            modelBuilder.Entity("backend.Models.LibrarianTask", b =>
+                {
+                    b.HasOne("backend.Models.Reservation", "Reservation")
+                        .WithMany("LibrarianTasks")
+                        .HasForeignKey("ReservationId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Reservation");
+                });
+
             modelBuilder.Entity("backend.Models.Loan", b =>
                 {
                     b.HasOne("backend.Models.Copy", "Copy")
@@ -417,7 +516,18 @@ namespace backend.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.HasOne("backend.Models.Copy", "Copy")
+                        .WithMany()
+                        .HasForeignKey("CopyId");
+
                     b.Navigation("Book");
+
+                    b.Navigation("Copy");
+                });
+
+            modelBuilder.Entity("Locker", b =>
+                {
+                    b.Navigation("IssueCompartments");
                 });
 
             modelBuilder.Entity("backend.Models.Author", b =>
@@ -455,6 +565,10 @@ namespace backend.Migrations
 
             modelBuilder.Entity("backend.Models.Reservation", b =>
                 {
+                    b.Navigation("IssueCompartment");
+
+                    b.Navigation("LibrarianTasks");
+
                     b.Navigation("Loan")
                         .IsRequired();
                 });

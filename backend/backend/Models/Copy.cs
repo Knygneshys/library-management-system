@@ -13,4 +13,9 @@ public class Copy
     public Book Book { get; set; }
 
     public Loan Loan { get; set; }
+
+    public void UpdateStatus()
+    {
+        IsTaken = false;
+    }
 }

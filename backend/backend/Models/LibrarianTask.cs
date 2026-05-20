@@ -6,6 +6,14 @@ public class LibrarianTask
     public LibrarianTaskType Type { get; set; } // Issue or Return
     public DateTime CreatedAt { get; set; }
 
+    public bool IsDone { get; set; }
+    public bool IsIssueTask { get; set; }
+
     public Guid ReservationId { get; set; }
     public Reservation Reservation { get; set; } = null!;
+
+    public void UpdateTask()
+    {
+        IsDone = true;
+    }
 }

@@ -7,7 +7,7 @@ using backend.Data;
 
 #nullable disable
 
-namespace backend.Data.Migrations
+namespace backend.Migrations
 {
     [DbContext(typeof(LibraryDbContext))]
     partial class LibraryDbContextModelSnapshot : ModelSnapshot
@@ -40,6 +40,9 @@ namespace backend.Data.Migrations
 
                     b.Property<double>("Height")
                         .HasColumnType("REAL");
+
+                    b.Property<bool>("IsDoorClosed")
+                        .HasColumnType("INTEGER");
 
                     b.Property<double>("Length")
                         .HasColumnType("REAL");
@@ -191,7 +194,11 @@ namespace backend.Data.Migrations
                     b.Property<Guid>("LockerId")
                         .HasColumnType("TEXT");
 
-                    b.Property<string>("Pin")
+                    b.Property<string>("PinCodeLibrarian")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("PinCodeReader")
                         .IsRequired()
                         .HasColumnType("TEXT");
 
@@ -220,6 +227,12 @@ namespace backend.Data.Migrations
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("TEXT");
 
+                    b.Property<bool>("IsDone")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<bool>("IsIssueTask")
+                        .HasColumnType("INTEGER");
+
                     b.Property<Guid>("ReservationId")
                         .HasColumnType("TEXT");
 
@@ -228,8 +241,7 @@ namespace backend.Data.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("ReservationId")
-                        .IsUnique();
+                    b.HasIndex("ReservationId");
 
                     b.ToTable("LibrarianTasks");
                 });
@@ -353,6 +365,9 @@ namespace backend.Data.Migrations
                     b.Property<Guid>("BookId")
                         .HasColumnType("TEXT");
 
+                    b.Property<Guid?>("CopyId")
+                        .HasColumnType("TEXT");
+
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("TEXT");
 
@@ -371,6 +386,8 @@ namespace backend.Data.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("BookId");
+
+                    b.HasIndex("CopyId");
 
                     b.ToTable("Reservations");
                 });
@@ -461,8 +478,8 @@ namespace backend.Data.Migrations
             modelBuilder.Entity("backend.Models.LibrarianTask", b =>
                 {
                     b.HasOne("backend.Models.Reservation", "Reservation")
-                        .WithOne("LibrarianTask")
-                        .HasForeignKey("backend.Models.LibrarianTask", "ReservationId")
+                        .WithMany("LibrarianTasks")
+                        .HasForeignKey("ReservationId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -496,7 +513,13 @@ namespace backend.Data.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.HasOne("backend.Models.Copy", "Copy")
+                        .WithMany()
+                        .HasForeignKey("CopyId");
+
                     b.Navigation("Book");
+
+                    b.Navigation("Copy");
                 });
 
             modelBuilder.Entity("Locker", b =>
@@ -541,7 +564,7 @@ namespace backend.Data.Migrations
                 {
                     b.Navigation("IssueCompartment");
 
-                    b.Navigation("LibrarianTask");
+                    b.Navigation("LibrarianTasks");
 
                     b.Navigation("Loan")
                         .IsRequired();

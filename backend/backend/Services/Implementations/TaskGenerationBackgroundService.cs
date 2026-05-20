@@ -21,7 +21,7 @@ public class TaskGenerationBackgroundService(
                 logger.LogError(ex, "Error occurred during task generation.");
             }
 
-            await Task.Delay(TimeSpan.FromMinutes(5), stoppingToken);
+            await Task.Delay(TimeSpan.FromSeconds(5), stoppingToken);
         }
     }
 }

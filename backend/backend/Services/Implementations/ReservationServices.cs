@@ -50,7 +50,8 @@ public class ReservationServices(LibraryDbContext dbContext) : IReservationServi
             IsExtended = false,
             WantsToReturn = false,
             State = ReservationState.InProgress,
-            BookId = bookId
+            BookId = bookId,
+            CopyId = freeCopy.Id
         };
 
         dbContext.Reservations.Add(reservation);

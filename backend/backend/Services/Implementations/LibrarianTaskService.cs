@@ -29,9 +29,12 @@ public class LibrarianTaskService(LibraryDbContext context) : ILibrarianTaskServ
                 LockerLocationCode = t.Reservation.IssueCompartment != null
                     ? t.Reservation.IssueCompartment.Locker.LocationCode
                     : null,
+                PinCodeLibrarian = t.Reservation.IssueCompartment != null
+                    ? t.Reservation.IssueCompartment.PinCodeLibrarian
+                    : null,
 
-                Pin = t.Reservation.IssueCompartment != null
-                    ? t.Reservation.IssueCompartment.Pin
+                PinCodeReader = t.Reservation.IssueCompartment != null
+                    ? t.Reservation.IssueCompartment.PinCodeReader
                     : null
             })
             .ToListAsync(cancellationToken);

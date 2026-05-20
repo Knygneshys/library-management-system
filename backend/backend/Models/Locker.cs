@@ -12,9 +12,12 @@ public class Locker
     public Guid ParcelLockerId { get; set; }
     public ParcelLocker ParcelLocker { get; set; } = null!;
 
+    public bool IsDoorClosed { get; set; } = true;
+
     public ICollection<IssueCompartment> IssueCompartments { get; set; } = new List<IssueCompartment>();
 
-    // TODO: Implement Issue compartment 
-    // public Guid IssueCompartmentId { get; set; }
-    // public IssueCompartment IssueCompartment { get; set; }
+    public void ResetLockerState()
+    {
+        LockerState = LockerState.Empty;
+    }
 }

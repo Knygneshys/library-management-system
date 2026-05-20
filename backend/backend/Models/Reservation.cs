@@ -16,11 +16,19 @@ public class Reservation
 
     public ReservationState State { get; set; }
 
+    public Guid? CopyId { get; set; }
+    public Copy? Copy { get; set; }
+
     public Guid BookId { get; set; }
     public Book Book { get; set; }
 
     public Loan Loan { get; set; }
 
     public IssueCompartment? IssueCompartment { get; set; }
-    public LibrarianTask? LibrarianTask { get; set; }
+    public ICollection<LibrarianTask> LibrarianTasks { get; set; } = new List<LibrarianTask>();
+
+    public void UpdateReservation()
+    {
+        State = ReservationState.Taken;
+    }
 }
