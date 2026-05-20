@@ -1,4 +1,4 @@
-namespace backend.Models;
+﻿namespace backend.Models;
 
 public class Loan
 {
@@ -12,5 +12,19 @@ public class Loan
     public Copy Copy { get; set; }
 
     public Guid ReservationId { get; set; }
-    public Reservation Reservation { get; set; }
+    public Reservation? Reservation { get; set; }
+    //public Guid UserId { get; set; }
+    //public User User { get; set; }
+
+    public static Loan Create(Reservation reservation)
+    {
+        return new Loan
+        {
+            Id = Guid.NewGuid(),
+            LoanDate = DateTime.UtcNow,
+            ReturnDate = DateTime.UtcNow.AddDays(14),
+            CopyId = reservation.CopyId ?? Guid.Empty,
+            ReservationId = reservation.Id
+        };
+    }
 }
