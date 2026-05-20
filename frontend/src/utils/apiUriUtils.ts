@@ -39,3 +39,7 @@ export const reservationUris = {
   RESERVE_BOOK: "Reservation/reserve",
   GO_TO_QUEUE: "Reservation/queue",
 };
+
+export const taskUris = {
+  GET_ALL: "Task",
+};
