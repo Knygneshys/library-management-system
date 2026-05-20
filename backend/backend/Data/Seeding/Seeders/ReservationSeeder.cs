@@ -14,25 +14,33 @@ public class ReservationSeeder : ISeeder
 
         var books = await context.Books.Take(3).ToListAsync();
 
-        var locker = await context.Lockers.FirstOrDefaultAsync();
+        var lockers = await context.Lockers.Take(2).ToListAsync();
 
         var user = await context.Users.FirstOrDefaultAsync();
-        if (!books.Any() || locker == null || user == null) return;
+        if (!books.Any() || !lockers.Any() == null || user == null) return;
 
         var now = DateTime.UtcNow;
 
         var copy = await context.Copies.FirstOrDefaultAsync(c => c.BookId == books[0].Id);
         if (copy == null) return;
 
-        var compartment = new IssueCompartment
+        var compartments = new List<IssueCompartment>
         {
-            Id = Guid.NewGuid(),
-            LockerId = locker.Id,
-            InsertionDate = DateTime.UtcNow,
-            PinCodeReader = "1234",
-            PinCodeLibrarian = "9999"
+            new IssueCompartment {
+                Id = Guid.NewGuid(),
+                LockerId = lockers[0].Id,
+                InsertionDate = DateTime.UtcNow,
+                PinCodeReader = "1234",
+                PinCodeLibrarian = "9999"
+            },
+            new IssueCompartment {
+                Id = Guid.NewGuid(),
+                LockerId = lockers[1].Id,
+                PinCodeReader = "0001",
+                PinCodeLibrarian = "0002"
+            }
         };
-        context.IssueCompartments.Add(compartment);
+        context.IssueCompartments.AddRange(compartments);
 
         var reservations = new List<Reservation>
         {
@@ -41,8 +49,7 @@ public class ReservationSeeder : ISeeder
                 Id = Guid.NewGuid(),
                 CreatedAt = now.AddDays(-3),
                 BookId = books[0].Id,
-                CopyId = copy.Id,
-                IssueCompartmentId = compartment.Id, // knyga atsiemimui
+                IssueCompartmentId = compartments[0].Id, // knyga atsiemimui
                 UserId = user.Id,
                 DueDate = now.AddDays(5), 
                 IsExtended = false,
@@ -55,7 +62,6 @@ public class ReservationSeeder : ISeeder
                 CreatedAt = now.AddDays(-2),
                 BookId = books[0].Id,
                 UserId = user.Id,
-                DueDate = now.AddDays(10),
                 IsExtended = false,
                 WantsToReturn = false,
                 State = ReservationState.InQueue
@@ -66,7 +72,6 @@ public class ReservationSeeder : ISeeder
                 CreatedAt = now.AddDays(-1),
                 BookId = books[0].Id,
                 UserId = user.Id,
-                DueDate = now.AddDays(15),
                 IsExtended = false,
                 WantsToReturn = false,
                 State = ReservationState.InQueue
@@ -78,8 +83,8 @@ public class ReservationSeeder : ISeeder
         copy.IsTaken = true;
         context.Copies.Update(copy);
 
-        locker.LockerState = LockerState.Occupied;
-        context.Lockers.Update(locker);
+        lockers[0].LockerState = LockerState.Occupied;
+        context.Lockers.Update(lockers[0]);
 
         await context.SaveChangesAsync();
     }

@@ -19,18 +19,30 @@ public class ParcelLockerSeeder : ISeeder
         };
         context.ParcelLockers.Add(parcelLocker);
 
-        var locker = new Locker
+        var lockers = new List<Locker>
         {
-            Id = Guid.NewGuid(),
-            ParcelLockerId = parcelLocker.Id,
-            LocationCode = "A1",
-            Height = 20.0, 
-            Width = 30.0,
-            Length = 50.0,
-            LockerState = LockerState.Empty,
-            IsDoorClosed = true
+            new Locker {
+                Id = Guid.NewGuid(),
+                ParcelLockerId = parcelLocker.Id,
+                LocationCode = "A1",
+                Height = 20.0, 
+                Width = 30.0,
+                Length = 50.0,
+                LockerState = LockerState.Empty,
+                IsDoorClosed = true
+            },  
+            new Locker {
+                Id = Guid.NewGuid(),
+                ParcelLockerId = parcelLocker.Id,
+                LocationCode = "A2",
+                Height = 20.0, 
+                Width = 30.0,
+                Length = 50.0,
+                LockerState = LockerState.Empty,
+                IsDoorClosed = true
+            }  
         };
-        context.Lockers.Add(locker);
+        context.Lockers.AddRange(lockers);
 
         await context.SaveChangesAsync();
     }

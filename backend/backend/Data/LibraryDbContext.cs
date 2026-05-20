@@ -129,11 +129,6 @@ public class LibraryDbContext(DbContextOptions<LibraryDbContext> options) : DbCo
                 .HasForeignKey<Loan>(l => l.CopyId)
                 .IsRequired();
 
-        modelBuilder.Entity<Reservation>()
-                .HasOne(r => r.Copy)
-                .WithOne(c => c.Reservation)
-                .HasForeignKey<Reservation>(r => r.CopyId)
-                .IsRequired(false);
 
         modelBuilder.Entity<LibraryTask>()
                 .HasOne(t => t.Reservation)

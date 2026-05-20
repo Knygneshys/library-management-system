@@ -10,12 +10,10 @@ public class Reservation
     
     public bool IsExtended { get; set; }
     
-    public DateTime DueDate { get; set; }
+    public DateTime? DueDate { get; set; }
     public bool WantsToReturn { get; set; }
     public Guid BookId { get; set; }
     public Book Book { get; set; } = null!;
-    public Guid? CopyId { get; set; }
-    public Copy? Copy { get; set; }
     public ReservationState State { get; set; }
     public ICollection<LibraryTask> LibraryTasks { get; set; } = new List<LibraryTask>();
     public Guid? IssueCompartmentId { get; set; }

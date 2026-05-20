@@ -6,7 +6,7 @@ namespace backend.Controllers;
 
 [Route("api/[controller]")]
 [ApiController]
-public class LockerController(ILockerServices lockerServices) : ControllerBase
+public class LockerController(ILockerServices lockerServices, ILogger<LockerController> logger) : ControllerBase
 {
     [HttpPost("{parelLockerId:guid}")]
     public async Task<IActionResult> CreateLocker([FromRoute] Guid parelLockerId, [FromBody] LockerCreateDto dto)
@@ -147,10 +147,11 @@ public class LockerController(ILockerServices lockerServices) : ControllerBase
         try
         {
             await lockerServices.InsertBookAsync(id, dto.PinCode);
-            return Ok(new { success = true });
+            return Ok();
         }
         catch (Exception ex)
         {
+            logger.LogError(ex, "Klaida vykdant InsertBook operaciją lockerID: {LockerId}", id);
             return BadRequest(new { message = ex.Message });
         }
     }

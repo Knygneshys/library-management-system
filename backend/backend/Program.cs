@@ -42,6 +42,7 @@ builder.Services.AddScoped<IBookServices, BookServices>();
 builder.Services.AddScoped<IReservationServices, ReservationServices>();
 builder.Services.AddScoped<ILockerServices, LockerServices>();
 
+builder.Services.AddScoped<ISeeder, UserSeeder>();
 builder.Services.AddScoped<ISeeder, PrintingHouseSeeder>();
 builder.Services.AddScoped<ISeeder, PublisherSeeder>();
 builder.Services.AddScoped<ISeeder, AuthorSeeder>();

@@ -92,6 +92,7 @@ export default function TakeBookPage() {
 
       <LockerPINSubmitDialog
         isOpen={pinDialogIsOpen}
+        body={isIssue ? "Pasiimkitę knygą. Būtinai uždarykite dureles." : "Įdėkitę knygą. Būtinai uždarykite dureles."}
         handleClose={handlePinDialogClose}
         onSubmitPin={handlePINSubmitEvent}
         isDoorOpened={isDoorOpened}

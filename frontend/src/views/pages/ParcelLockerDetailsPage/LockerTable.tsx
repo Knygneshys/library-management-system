@@ -43,10 +43,6 @@ export function LockerTable({
           </TableCell>
 
           <TableCell sx={{ fontSize: tableHeaderFontSize}}>
-            IsDoorClosed
-          </TableCell>
-
-          <TableCell sx={{ fontSize: tableHeaderFontSize}}>
             State
           </TableCell>
 
@@ -63,7 +59,6 @@ export function LockerTable({
             <TableCell>{locker.height}</TableCell>
             <TableCell>{locker.width}</TableCell>
             <TableCell>{locker.length}</TableCell>
-            <TableCell>{locker.IsDoorClosed}</TableCell>
             <TableCell>{LockerState[locker.lockerState]}</TableCell>
 
             <TableCell>

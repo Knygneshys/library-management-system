@@ -5,7 +5,7 @@ import { lockerCreationValidation } from "../../../../validation/locker/lockerCr
 
 export type LockerCreationFormContent = Omit<
   Locker,
-  "id" | "parcelLockerId" | "lockerState"
+  "id" | "parcelLockerId" | "lockerState" | "IsDoorClosed"
 >;
 
 interface Props {
