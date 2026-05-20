@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace backend.Services.Implementations;
 
-public class LockerServices(LibraryDbContext dbContext) : ILockerServices
+public class LockerServices(LibraryDbContext dbContext, IMailService mailService) : ILockerServices
 {
 
     private const string EntityName = "Locker";
@@ -136,12 +136,8 @@ public class LockerServices(LibraryDbContext dbContext) : ILockerServices
             .Include(l => l.IssueCompartment)
             .FirstOrDefaultAsync(l => l.IssueCompartment != null &&
                 (l.IssueCompartment.PinCodeReader == pinCode ||
-                 l.IssueCompartment.PinCodeLibrarian == pinCode));
-
-        if (locker == null)
-        {
-            return null; 
-        }
+                 l.IssueCompartment.PinCodeLibrarian == pinCode))
+            ?? throw new EntityNotFoundException(EntityName);
 
         return new LockerDto
         {
@@ -202,7 +198,7 @@ public class LockerServices(LibraryDbContext dbContext) : ILockerServices
 
             if (reservation != null)
             {
-                reservation.UpdateReservation();
+                reservation.IssueBook();
                 dbContext.Reservations.Update(reservation);
                 // create loan
                 var loan = Loan.Create(reservation);
@@ -230,8 +226,83 @@ public class LockerServices(LibraryDbContext dbContext) : ILockerServices
                 if (task != null)
                 {
                     task.UpdateTask();
+                    dbContext.LibraryTasks.Update(task);
                 }
             }
+        }
+        else
+        {
+            throw new Exception("Neteisingas PIN kodas. Operacija negalima.");
+        }
+
+        dbContext.IssueCompartments.Remove(issueCompartment);
+        await dbContext.SaveChangesAsync();
+    }
+
+    public async Task InsertBookAsync(Guid lockerId, string pinCode)
+    {
+        var locker = await dbContext.Lockers
+            .Include(l => l.IssueCompartment)
+            .Include(l => l.ParcelLocker)
+            .FirstOrDefaultAsync(l => l.Id == lockerId)
+            ?? throw new EntityNotFoundException(EntityName);
+
+        // 4.
+        locker.SetOccupied();
+        dbContext.Lockers.Update(locker);
+
+        // 6.
+        var issueCompartment = IssueCompartment.GetByLocker(locker);
+
+        // 8.
+        var reservation = await dbContext.Reservations
+            .Include(l => l.User)
+            .Include(l => l.Book)
+            .FirstOrDefaultAsync(r => r.IssueCompartmentId == issueCompartment.Id)
+            ?? throw new EntityNotFoundException($"Reservation with issueCompartnment: {issueCompartment.Id}");
+
+        // Alt
+        if (issueCompartment.PinCodeReader == pinCode)
+        {
+            // 10.
+            reservation.InsertBook();
+            dbContext.Reservations.Update(reservation);
+            
+            // 12.
+            var loan = await dbContext.Loans
+                .FirstOrDefaultAsync(l => l.ReservationId == reservation.Id)
+                ?? throw new EntityNotFoundException($"Loan with reservation: {reservation.Id}");
+
+            // 14.
+            loan.ReturnBook();
+            dbContext.Loans.Update(loan);
+
+            // 16. TODO: Create task Entity
+            var task = LibraryTask.Create(reservation, IsIssue: false); 
+            await dbContext.LibraryTasks.AddAsync(task);
+
+        }
+        else if (issueCompartment.PinCodeLibrarian == pinCode)
+        {
+            // 18.
+            var task = reservation.LibraryTasks.FirstOrDefault(t => t.IsIssueTask == true && t.IsDone == false)
+                ?? throw new EntityNotFoundException($"Issue Task with reservation: {reservation.Id}");
+
+            // 20.
+            task.UpdateTask();
+            dbContext.LibraryTasks.Update(task);
+
+            // 22. Siųsti paštą
+            var user = reservation.User ?? throw new Exception($"User not found from reservation: {reservation.Id}");
+
+            await mailService.SendLockerNotificationAsync(
+                recipientEmail: user.Email,
+                bookTitle: reservation.Book.Title,
+                lockerAddress: locker.ParcelLocker.Address,
+                openCode: pinCode,
+                daysToPickUp: 3
+            );
+    
         }
         else
         {

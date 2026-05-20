@@ -23,7 +23,15 @@ public class Reservation
     public Guid? ReturnCompartmentId { get; set; }
     public IssueCompartment? ReturnCompartment { get; set; }
     public Loan? Loan { get; set; }
-    public void UpdateReservation()
+    public Guid UserId { get; set; }
+    public User? User { get; set; }
+
+    public void IssueBook()
+    {
+        State = ReservationState.NotLate;
+    }
+
+    public void InsertBook()
     {
         State = ReservationState.Completed;
     }

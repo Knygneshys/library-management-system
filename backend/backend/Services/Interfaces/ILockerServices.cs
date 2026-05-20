@@ -23,4 +23,5 @@ public interface ILockerServices
     Task<bool> IsLockerClosedAsync(Guid id);
     Task HandleLockerClosedAsync(Guid id);
     Task ResetLockerAsync(Guid lockerId, string pinCode);
+    Task InsertBookAsync(Guid lockerId, string pinCode);
 }

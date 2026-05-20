@@ -126,12 +126,27 @@ public class LockerController(ILockerServices lockerServices) : ControllerBase
             return BadRequest(new { message = ex.Message });
         }
     }
+
     [HttpPost("{id:guid}/reset")]
     public async Task<IActionResult> ResetLocker([FromRoute] Guid id, [FromBody] ResetLockerDto dto)
     {
         try
         {
             await lockerServices.ResetLockerAsync(id, dto.PinCode);
+            return Ok(new { success = true });
+        }
+        catch (Exception ex)
+        {
+            return BadRequest(new { message = ex.Message });
+        }
+    }
+
+    [HttpPost("{id:guid}/insert")]
+    public async Task<IActionResult> InsertBook([FromRoute] Guid id, [FromBody] InsertLockerDto dto)
+    {
+        try
+        {
+            await lockerServices.InsertBookAsync(id, dto.PinCode);
             return Ok(new { success = true });
         }
         catch (Exception ex)

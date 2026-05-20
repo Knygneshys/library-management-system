@@ -15,7 +15,9 @@ public class ReservationSeeder : ISeeder
         var books = await context.Books.Take(3).ToListAsync();
 
         var locker = await context.Lockers.FirstOrDefaultAsync();
-        if (!books.Any() || locker == null) return;
+
+        var user = await context.Users.FirstOrDefaultAsync();
+        if (!books.Any() || locker == null || user == null) return;
 
         var now = DateTime.UtcNow;
 
@@ -41,6 +43,7 @@ public class ReservationSeeder : ISeeder
                 BookId = books[0].Id,
                 CopyId = copy.Id,
                 IssueCompartmentId = compartment.Id, // knyga atsiemimui
+                UserId = user.Id,
                 DueDate = now.AddDays(5), 
                 IsExtended = false,
                 WantsToReturn = false,
@@ -51,6 +54,7 @@ public class ReservationSeeder : ISeeder
                 Id = Guid.NewGuid(),
                 CreatedAt = now.AddDays(-2),
                 BookId = books[0].Id,
+                UserId = user.Id,
                 DueDate = now.AddDays(10),
                 IsExtended = false,
                 WantsToReturn = false,
@@ -61,6 +65,7 @@ public class ReservationSeeder : ISeeder
                 Id = Guid.NewGuid(),
                 CreatedAt = now.AddDays(-1),
                 BookId = books[0].Id,
+                UserId = user.Id,
                 DueDate = now.AddDays(15),
                 IsExtended = false,
                 WantsToReturn = false,

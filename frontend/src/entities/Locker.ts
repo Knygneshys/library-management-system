@@ -7,6 +7,7 @@ export type Locker = {
   height: number, 
   width: number,
   length: number,
+  IsDoorClosed: boolean,
   lockerState: LockerState,
   parcelLockerId: number
 };

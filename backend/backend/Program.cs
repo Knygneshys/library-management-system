@@ -54,6 +54,8 @@ builder.Services.AddScoped<ISeeder, LoanSeeder>();
 
 builder.Services.AddScoped<ApplicationSeeder>();
 
+builder.Services.AddScoped<IMailService, GmailServiceWrapper>();
+
 var app = builder.Build();
 
 if (app.Environment.IsDevelopment())
