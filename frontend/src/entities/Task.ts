@@ -7,6 +7,7 @@ export type Task = {
   createdAt: string;
   reservationId: Guid;
   lockerId: Guid | null;
+  bookId: Guid;
   lockerLocationCode: string | null;
   pinCodeLibrarian: string | null;
   pinCodeReader: string | null;

@@ -12,24 +12,24 @@ import type { Task } from "../../../../entities/Task";
 
 interface Props {
   task: Task | null;
+  bookTitle?: string;
   onClose: () => void;
 }
 
-export default function TaskModal({ task, onClose }: Props) {
+export default function TaskModal({ task, bookTitle, onClose }: Props) {
   if (!task) return null;
-
   return (
     <Dialog open={!!task} onClose={onClose} fullWidth maxWidth="sm">
       <DialogTitle>Task details</DialogTitle>
-
       <DialogContent>
         <Stack spacing={2} sx={{ mt: 1 }}>
           <Typography>
             <strong>Type:</strong> {task.type}
           </Typography>
-
+          <Typography>
+            <strong>Book:</strong> {bookTitle ?? "—"}
+          </Typography>
           <Divider />
-
           <Typography>
             <strong>Locker location:</strong> {task.lockerLocationCode ?? "—"}
           </Typography>
@@ -39,15 +39,12 @@ export default function TaskModal({ task, onClose }: Props) {
           <Typography>
             <strong>Reader PIN:</strong> {task.pinCodeReader ?? "—"}
           </Typography>
-
           <Divider />
-
           <Typography variant="body2" color="text.secondary">
             Reservation ID: {task.reservationId?.toString() ?? "—"}
           </Typography>
         </Stack>
       </DialogContent>
-
       <DialogActions>
         <Button onClick={onClose} variant="outlined">
           Close
