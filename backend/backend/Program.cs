@@ -40,6 +40,8 @@ builder.Services.AddScoped<ILockerServices, LockerServices>();
 builder.Services.AddScoped<IPrintingHouseServices, PrintingHouseServices>();
 builder.Services.AddScoped<IBookServices, BookServices>();
 builder.Services.AddScoped<IReservationServices, ReservationServices>();
+builder.Services.AddScoped<ITaskGenerationServices, TaskGenerationService>();
+builder.Services.AddHostedService<TaskGenerationBackgroundService>();
 
 builder.Services.AddScoped<ISeeder, PrintingHouseSeeder>();
 builder.Services.AddScoped<ISeeder, PublisherSeeder>();
@@ -49,6 +51,7 @@ builder.Services.AddScoped<ISeeder, BookSeeder>();
 builder.Services.AddScoped<ISeeder, CopySeeder>();
 builder.Services.AddScoped<ISeeder, ReservationSeeder>();
 builder.Services.AddScoped<ISeeder, LoanSeeder>();
+builder.Services.AddScoped<ISeeder, ParcelLockerSeeder>();
 
 builder.Services.AddScoped<ApplicationSeeder>();
 

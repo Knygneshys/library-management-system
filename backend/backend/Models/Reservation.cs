@@ -20,4 +20,7 @@ public class Reservation
     public Book Book { get; set; }
 
     public Loan Loan { get; set; }
+
+    public IssueCompartment? IssueCompartment { get; set; }
+    public LibrarianTask? LibrarianTask { get; set; }
 }

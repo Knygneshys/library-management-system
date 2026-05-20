@@ -22,21 +22,6 @@ public class ReservationController(IReservationServices reservationServices) : C
         }
     }
 
-    [HttpGet("free-count/{bookId:guid}")]
-    public async Task<IActionResult> GetFreeCopyCountAsync(Guid bookId)
-    {
-        try
-        {
-            var freeCount = await reservationServices.GetFreeCopyCountAsync(bookId);
-
-            return Ok(freeCount);
-        }
-        catch (Exception ex)
-        {
-            return BadRequest(ex.Message);
-        }
-    }
-
     [HttpPost("reserve/{bookId:guid}")]
     public async Task<IActionResult> ReserveCopyAsync(Guid bookId)
     {

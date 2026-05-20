@@ -22,18 +22,6 @@ public class ReservationServices(LibraryDbContext dbContext) : IReservationServi
         return true;
     }
 
-    public async Task<int> GetFreeCopyCountAsync(Guid bookId)
-    {
-        var bookExists = await dbContext.Books.AnyAsync(b => b.Id.Equals(bookId));
-
-        if (!bookExists)
-        {
-            throw new EntityNotFoundException("Book");
-        }
-
-        return await dbContext.Copies.CountAsync(c => c.BookId.Equals(bookId) && !c.IsTaken);
-    }
-
     public async Task<bool> ReserveCopyAsync(Guid bookId)
     {
         var bookExists = await dbContext.Books

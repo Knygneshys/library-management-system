@@ -8,5 +8,5 @@ public class ParcelLocker
 
     public ParcelLockerState LockerState { get; set; }
 
-    public ICollection<Locker> Lockers { get; } = [];
+    public ICollection<Locker> Lockers { get; set; } = new List<Locker>();
 }
