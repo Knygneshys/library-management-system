@@ -1,8 +1,8 @@
 export enum ReservationState {
-  Cancelled,
-  InQueue,
-  InProgress,
-  NotLate,
-  Late,
-  Completed,
+  Cancelled = "Cancelled",
+  InQueue = "InQueue",
+  InProgress = "InProgress",
+  NotLate = "NotLate",
+  Late = "Late",
+  Completed = "Completed",
 }
