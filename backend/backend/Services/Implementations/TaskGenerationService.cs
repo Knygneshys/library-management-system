@@ -15,13 +15,20 @@ public class TaskGenerationService(LibraryDbContext dbContext) : ITaskGeneration
             .Where(r => r.LibrarianTask == null)
             .ToListAsync(cancellationToken);
 
+        var freeLockers = await dbContext.Lockers
+            .Where(l => l.LockerState == LockerState.Empty)
+            .ToListAsync(cancellationToken);
+
+        var random = new Random();
+
         foreach (var reservation in reservations)
         {
-            var freeLocker = await dbContext.Lockers
-                .FirstOrDefaultAsync(l => l.LockerState == LockerState.Empty, cancellationToken);
-
-            if (freeLocker is null)
+            if (freeLockers.Count == 0)
                 break;
+
+            var randomIndex = random.Next(freeLockers.Count);
+            var freeLocker = freeLockers[randomIndex];
+            freeLockers.RemoveAt(randomIndex);
 
             var pin = GeneratePin();
 
