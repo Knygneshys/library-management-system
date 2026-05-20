@@ -70,3 +70,50 @@ export const deleteLocker = async (locker: Locker) => {
     throw error;
   }
 };
+
+export const resetLocker = async (lockerId: string, pinCode: string) => {
+  try {
+    const uri = `/locker/${lockerId}/reset`;
+    const response = await apiClient.post<{ success: boolean }>(uri, { pinCode });
+    return response.data;
+  } catch (error) {
+    console.error("Error resetting locker:", error);
+    throw error;
+  }
+};
+
+export const submitPin = async (pinCode: string) => {
+  try {
+    // Jei įsidėsi į utils, pakeisk eilutę į: const uri = lockerUris.SUBMIT_PIN;
+    const uri = "/locker/submit-pin"; 
+    
+    // Tikimės gauti objektą su lockerId
+    const response = await apiClient.post<{ success: boolean; lockerId: string }>(uri, { pinCode });
+    return response.data;
+  } catch (error) {
+    console.error("Error submitting PIN:", error);
+    throw error;
+  }
+};
+
+export const isLockerClosed = async (lockerId: string) => {
+  try {
+    const uri = `/locker/${lockerId}/is-closed`;
+    const response = await apiClient.get<{ closed: boolean }>(uri);
+    return response.data;
+  } catch (error) {
+    console.error("Error checking locker status:", error);
+    throw error;
+  }
+};
+
+export const closeLocker = async (lockerId: string) => {
+  try {
+    const uri = `/locker/${lockerId}/close`;
+    const response = await apiClient.post<{ success: boolean }>(uri, {});
+    return response.data;
+  } catch (error) {
+    console.error("Error closing locker:", error);
+    throw error;
+  }
+};

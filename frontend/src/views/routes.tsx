@@ -6,6 +6,7 @@ import HistoryEduIcon from "@mui/icons-material/HistoryEdu";
 import HomeIcon from "@mui/icons-material/Home";
 import BookPage from "./pages/BookPage/BookPage";
 import BookIcon from "@mui/icons-material/Book";
+import ParcelMachinePage from "./pages/ParcelMachinePage/ParcelMachinePage";
 
 export const routes = [
   {
@@ -36,6 +37,12 @@ export const routes = [
     route: "/books",
     component: BookPage,
     name: "Books",
+    icon: <BookIcon sx={{ fontSize: sidebarIconSize }} />,
+  },
+  {
+    route: "/parcelmachine",
+    component: ParcelMachinePage,
+    name: "Parcel Machine",
     icon: <BookIcon sx={{ fontSize: sidebarIconSize }} />,
   },
 ];
