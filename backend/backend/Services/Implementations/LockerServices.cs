@@ -180,7 +180,6 @@ public class LockerServices(LibraryDbContext dbContext) : ILockerServices
     }
 
 
-
     public async Task ResetLockerAsync(Guid lockerId, string pinCode)
     {
         var locker = await dbContext.Lockers
@@ -222,13 +221,14 @@ public class LockerServices(LibraryDbContext dbContext) : ILockerServices
                     copy.UpdateStatus();
                     dbContext.Copies.Update(copy);
                 }
-
+                
                 // pazymeti is_done true
                 var task = reservation.LibrarianTasks.FirstOrDefault(t => t.IsIssueTask == false && t.IsDone == false);
                 if (task != null)
                 {
                     task.UpdateTask();
                 }
+                
             }
         }
         else

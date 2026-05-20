@@ -31,7 +31,7 @@ public class LoanSeeder : ISeeder
             CopyId = copy.Id,
             ReservationId = reservation.Id,
             LoanDate = DateTime.UtcNow,
-            ReturnDate = DateTime.UtcNow.AddDays(14)
+            ReturnDate = null//DateTime.UtcNow.AddDays(14)
         };
 
         copy.IsTaken = true;

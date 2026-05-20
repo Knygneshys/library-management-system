@@ -12,8 +12,11 @@ public class TaskServices(LibraryDbContext context) : ITaskService
         return await context.LibrarianTasks
             .AsNoTracking()
             .Include(t => t.Reservation)
-            .ThenInclude(r => r.IssueCompartment)
-            .ThenInclude(ic => ic.Locker)
+                .ThenInclude(r => r.IssueCompartment)
+                .ThenInclude(ic => ic.Locker)
+            .Where(t => t.IsDone == false &&
+                t.Reservation.Loan != null &&
+                t.Reservation.Loan.ReturnDate == null)
             .OrderByDescending(t => t.CreatedAt)
             .Select(t => new TaskDto
             {
@@ -38,5 +41,6 @@ public class TaskServices(LibraryDbContext context) : ITaskService
                     : null
             })
             .ToListAsync(cancellationToken);
+        
     }
 }

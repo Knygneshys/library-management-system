@@ -9,7 +9,7 @@ import {
 } from "@mui/material";
 import type { Locker } from "../../../entities/Locker";
 import { tableHeaderFontSize } from "../../../constants/fontSizeConstants";
-import { LockerState } from "../../../entities/LockerState";
+//import { LockerState } from "../../../entities/LockerState";
 
 interface Props {
   lockers: Locker[];
@@ -59,8 +59,7 @@ export function LockerTable({
             <TableCell>{locker.height}</TableCell>
             <TableCell>{locker.width}</TableCell>
             <TableCell>{locker.length}</TableCell>
-            <TableCell>{LockerState[locker.lockerState]}</TableCell>
-
+            <TableCell>{locker.lockerState}</TableCell>
             <TableCell>
               <Stack direction="row" spacing={2}>
                 <Button onClick={() => onUpdateButtonClick(locker)}>
