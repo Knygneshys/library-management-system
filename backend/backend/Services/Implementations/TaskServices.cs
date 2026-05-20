@@ -21,6 +21,7 @@ public class TaskServices(LibraryDbContext context) : ITaskService
                 Type = t.Type,
                 CreatedAt = t.CreatedAt,
                 ReservationId = t.ReservationId,
+                BookId = t.Reservation.BookId,
 
                 LockerId = t.Reservation.IssueCompartment != null
                     ? t.Reservation.IssueCompartment.LockerId
@@ -32,7 +33,6 @@ public class TaskServices(LibraryDbContext context) : ITaskService
                 PinCodeLibrarian = t.Reservation.IssueCompartment != null
                     ? t.Reservation.IssueCompartment.PinCodeLibrarian
                     : null,
-
                 PinCodeReader = t.Reservation.IssueCompartment != null
                     ? t.Reservation.IssueCompartment.PinCodeReader
                     : null

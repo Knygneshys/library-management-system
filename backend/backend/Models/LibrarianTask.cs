@@ -10,6 +10,8 @@ public class LibrarianTask
     public bool IsIssueTask { get; set; }
 
     public Guid ReservationId { get; set; }
+    
+    public Guid BookId { get; set; }
     public Reservation Reservation { get; set; } = null!;
 
     public void UpdateTask()

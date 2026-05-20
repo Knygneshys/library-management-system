@@ -11,6 +11,7 @@ public class TaskDto
     public DateTime CreatedAt { get; set; }
 
     public Guid ReservationId { get; set; }
+    public Guid BookId { get; set; }
 
     public Guid? LockerId { get; set; }
 
