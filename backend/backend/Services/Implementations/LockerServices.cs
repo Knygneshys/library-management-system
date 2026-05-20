@@ -138,7 +138,7 @@ public class LockerServices(LibraryDbContext dbContext) : ILockerServices
 
         if (locker == null)
         {
-            return null; 
+            return null;
         }
 
         return new LockerDto

@@ -16,7 +16,8 @@ public class LibraryDbContext(DbContextOptions<LibraryDbContext> options) : DbCo
     public DbSet<Loan> Loans { get; set; }
     public DbSet<Reservation> Reservations { get; set; }
     public DbSet<IssueCompartment> IssueCompartments { get; set; }
-    public DbSet<LibrarianTask> TaskService { get; set; }
+    
+    public DbSet<LibrarianTask> LibrarianTasks { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -111,19 +112,19 @@ public class LibraryDbContext(DbContextOptions<LibraryDbContext> options) : DbCo
                 .HasMany(b => b.Genres)
                 .WithMany(g => g.Books)
                 .UsingEntity(join => join.ToTable("BookGenres"));
-        
+
         modelBuilder.Entity<IssueCompartment>()
                 .HasOne(ic => ic.Locker)
                 .WithMany(l => l.IssueCompartments)
                 .HasForeignKey(ic => ic.LockerId)
                 .IsRequired();
-        
+
         modelBuilder.Entity<IssueCompartment>()
                 .HasOne(ic => ic.Reservation)
                 .WithOne(r => r.IssueCompartment)
                 .HasForeignKey<IssueCompartment>(ic => ic.ReservationId)
                 .IsRequired();
-        
+
         modelBuilder.Entity<LibrarianTask>()
                 .HasOne(t => t.Reservation)
                 .WithMany(r => r.LibrarianTasks)

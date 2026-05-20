@@ -36,7 +36,7 @@ if (string.IsNullOrEmpty(connectionString))
 builder.Services.AddDbContext<LibraryDbContext>(opt => opt.UseSqlite(connectionString));
 
 builder.Services.AddControllers()
-    .AddJsonOptions(o => 
+    .AddJsonOptions(o =>
         o.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter()));
 
 builder.Services.AddScoped<IAuthorServices, AuthorServices>();

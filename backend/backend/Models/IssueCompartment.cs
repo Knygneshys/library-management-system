@@ -5,8 +5,8 @@ public class IssueCompartment
     public Guid Id { get; set; }
 
     public IssueCompartmentType Type { get; set; }
-    
-    public string PinCodeReader { get; set;} = string.Empty;
+
+    public string PinCodeReader { get; set; } = string.Empty;
     public string PinCodeLibrarian { get; set; } = string.Empty;
 
     public Guid LockerId { get; set; }

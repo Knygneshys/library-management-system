@@ -18,7 +18,6 @@ public class TaskGenerationServices(LibraryDbContext dbContext) : ITaskGeneratio
                 r.IssueCompartment == null &&
                 (
                     r.State == ReservationState.InQueue ||
-                    r.State == ReservationState.InProgress ||
                     r.WantsToReturn
                 ))
             .ToListAsync(cancellationToken);
@@ -27,44 +26,47 @@ public class TaskGenerationServices(LibraryDbContext dbContext) : ITaskGeneratio
             .Where(l => l.LockerState == LockerState.Empty)
             .ToListAsync(cancellationToken);
 
+        if (freeLockers.Count == 0)
+            return;
+        
         foreach (var reservation in reservations)
         {
-            if (freeLockers.Count == 0)
-                break;
-
             var randomIndex = Random.Shared.Next(freeLockers.Count);
             var freeLocker = freeLockers[randomIndex];
             freeLockers.RemoveAt(randomIndex);
 
+            var readerPin = GeneratePin();
+            var librarianPin = GeneratePin();
+            
             if (reservation.State == ReservationState.InQueue ||
                 reservation.State == ReservationState.InProgress)
             {
-                CreateIssueTask(reservation, freeLocker);
+                CreateIssueTask(reservation, freeLocker, readerPin, librarianPin);
             }
             else if (reservation.WantsToReturn)
             {
-                CreateReturnTask(reservation, freeLocker);
+                CreateReturnTask(reservation, freeLocker,  readerPin,  librarianPin);
             }
         }
 
         await dbContext.SaveChangesAsync(cancellationToken);
     }
 
-    private void CreateIssueTask(Reservation reservation, Locker freeLocker)
+    private void CreateIssueTask(Reservation reservation, Locker freeLocker, string readerPin, string librarianPin)
     {
         dbContext.IssueCompartments.Add(new IssueCompartment
         {
             Id = Guid.NewGuid(),
             Type = IssueCompartmentType.Issue,
-            PinCodeReader = GeneratePin(),
-            PinCodeLibrarian = GeneratePin(),
+            PinCodeReader = readerPin,
+            PinCodeLibrarian = librarianPin,
             LockerId = freeLocker.Id,
             ReservationId = reservation.Id,
         });
 
         freeLocker.LockerState = LockerState.Occupied;
 
-        dbContext.TaskService.Add(new LibrarianTask
+        dbContext.LibrarianTasks.Add(new LibrarianTask
         {
             Id = Guid.NewGuid(),
             Type = LibrarianTaskType.Issue,
@@ -73,21 +75,21 @@ public class TaskGenerationServices(LibraryDbContext dbContext) : ITaskGeneratio
         });
     }
 
-    private void CreateReturnTask(Reservation reservation, Locker freeLocker)
+    private void CreateReturnTask(Reservation reservation, Locker freeLocker,string readerPin, string librarianPin)
     {
         dbContext.IssueCompartments.Add(new IssueCompartment
         {
             Id = Guid.NewGuid(),
             Type = IssueCompartmentType.Return,
-            PinCodeReader = GeneratePin(),
-            PinCodeLibrarian = GeneratePin(),
+            PinCodeReader = readerPin,
+            PinCodeLibrarian = librarianPin,
             LockerId = freeLocker.Id,
             ReservationId = reservation.Id,
         });
 
         freeLocker.LockerState = LockerState.Occupied;
 
-        dbContext.TaskService.Add(new LibrarianTask
+        dbContext.LibrarianTasks.Add(new LibrarianTask
         {
             Id = Guid.NewGuid(),
             Type = LibrarianTaskType.Return,

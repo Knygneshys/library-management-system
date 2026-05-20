@@ -9,7 +9,7 @@ public class TaskServices(LibraryDbContext context) : ITaskService
 {
     public async Task<List<TaskDto>> GetAllAsync(CancellationToken cancellationToken)
     {
-        return await context.TaskService
+        return await context.LibrarianTasks
             .AsNoTracking()
             .Include(t => t.Reservation)
             .ThenInclude(r => r.IssueCompartment)
