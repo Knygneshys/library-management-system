@@ -243,7 +243,7 @@ namespace backend.Migrations
 
                     b.HasIndex("ReservationId");
 
-                    b.ToTable("LibrarianTasks");
+                    b.ToTable("TaskServices");
                 });
 
             modelBuilder.Entity("backend.Models.Loan", b =>
@@ -478,7 +478,7 @@ namespace backend.Migrations
             modelBuilder.Entity("backend.Models.LibrarianTask", b =>
                 {
                     b.HasOne("backend.Models.Reservation", "Reservation")
-                        .WithMany("LibrarianTasks")
+                        .WithMany("TaskServices")
                         .HasForeignKey("ReservationId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -564,7 +564,7 @@ namespace backend.Migrations
                 {
                     b.Navigation("IssueCompartment");
 
-                    b.Navigation("LibrarianTasks");
+                    b.Navigation("TaskServices");
 
                     b.Navigation("Loan")
                         .IsRequired();

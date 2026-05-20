@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace backend.Services.Implementations;
 
-public class TaskGenerationService(LibraryDbContext dbContext) : ITaskGenerationServices
+public class TaskGenerationServices(LibraryDbContext dbContext) : ITaskGenerationServices
 {
     public async Task GenerateTasksAsync(CancellationToken cancellationToken)
     {
@@ -64,7 +64,7 @@ public class TaskGenerationService(LibraryDbContext dbContext) : ITaskGeneration
 
         freeLocker.LockerState = LockerState.Occupied;
 
-        dbContext.LibrarianTasks.Add(new LibrarianTask
+        dbContext.TaskService.Add(new LibrarianTask
         {
             Id = Guid.NewGuid(),
             Type = LibrarianTaskType.Issue,
@@ -87,7 +87,7 @@ public class TaskGenerationService(LibraryDbContext dbContext) : ITaskGeneration
 
         freeLocker.LockerState = LockerState.Occupied;
 
-        dbContext.LibrarianTasks.Add(new LibrarianTask
+        dbContext.TaskService.Add(new LibrarianTask
         {
             Id = Guid.NewGuid(),
             Type = LibrarianTaskType.Return,

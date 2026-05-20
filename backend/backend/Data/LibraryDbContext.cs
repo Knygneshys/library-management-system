@@ -16,7 +16,7 @@ public class LibraryDbContext(DbContextOptions<LibraryDbContext> options) : DbCo
     public DbSet<Loan> Loans { get; set; }
     public DbSet<Reservation> Reservations { get; set; }
     public DbSet<IssueCompartment> IssueCompartments { get; set; }
-    public DbSet<LibrarianTask> LibrarianTasks { get; set; }
+    public DbSet<LibrarianTask> TaskService { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

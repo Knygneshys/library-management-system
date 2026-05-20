@@ -5,11 +5,11 @@ using Microsoft.EntityFrameworkCore;
 
 namespace backend.Services.Implementations;
 
-public class LibrarianTaskService(LibraryDbContext context) : ILibrarianTaskService
+public class TaskServices(LibraryDbContext context) : ITaskService
 {
     public async Task<List<TaskDto>> GetAllAsync(CancellationToken cancellationToken)
     {
-        return await context.LibrarianTasks
+        return await context.TaskService
             .AsNoTracking()
             .Include(t => t.Reservation)
             .ThenInclude(r => r.IssueCompartment)

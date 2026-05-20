@@ -119,7 +119,7 @@ namespace backend.Migrations
                 columns: new[] { "BooksId", "GenresId" });
 
             migrationBuilder.CreateTable(
-                name: "LibrarianTasks",
+                name: "TaskServices",
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "TEXT", nullable: false),
@@ -170,7 +170,7 @@ namespace backend.Migrations
 
             migrationBuilder.CreateIndex(
                 name: "IX_LibrarianTasks_ReservationId",
-                table: "LibrarianTasks",
+                table: "TaskServices",
                 column: "ReservationId");
 
             migrationBuilder.AddForeignKey(
@@ -214,7 +214,7 @@ namespace backend.Migrations
                 table: "IssueCompartments");
 
             migrationBuilder.DropTable(
-                name: "LibrarianTasks");
+                name: "TaskServices");
 
             migrationBuilder.DropIndex(
                 name: "IX_Reservations_CopyId",

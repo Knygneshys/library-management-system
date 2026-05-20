@@ -6,7 +6,7 @@ namespace backend.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
-public class TaskController(ILibrarianTaskService taskService) : ControllerBase
+public class TaskController(ITaskService taskService) : ControllerBase
 {
     [HttpGet]
     public async Task<ActionResult<IEnumerable<TaskDto>>> GetAllTasks(CancellationToken cancellationToken)

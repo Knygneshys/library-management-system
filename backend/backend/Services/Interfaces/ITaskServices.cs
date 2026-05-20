@@ -2,7 +2,7 @@
 
 namespace backend.Services.Interfaces;
 
-public interface ILibrarianTaskService
+public interface ITaskService
 {
     Task<List<TaskDto>> GetAllAsync(CancellationToken cancellationToken);
 }
