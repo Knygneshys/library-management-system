@@ -1,4 +1,4 @@
-﻿using backend.Enums;
+using backend.Enums;
 
 namespace backend.Models;
 
@@ -7,24 +7,28 @@ public class Reservation
     public Guid Id { get; set; }
 
     public DateTime CreatedAt { get; set; }
-    
+
     public bool IsExtended { get; set; }
-    
+
     public DateTime DueDate { get; set; }
+
     public bool WantsToReturn { get; set; }
-    public Guid BookId { get; set; }
-    public Book Book { get; set; } = null!;
+
+    public ReservationState State { get; set; }
+
     public Guid? CopyId { get; set; }
     public Copy? Copy { get; set; }
-    public ReservationState State { get; set; }
-    public ICollection<LibraryTask> LibraryTasks { get; set; } = new List<LibraryTask>();
-    public Guid? IssueCompartmentId { get; set; }
+
+    public Guid BookId { get; set; }
+    public Book Book { get; set; }
+
+    public Loan Loan { get; set; }
+
     public IssueCompartment? IssueCompartment { get; set; }
-    public Guid? ReturnCompartmentId { get; set; }
-    public IssueCompartment? ReturnCompartment { get; set; }
-    public Loan? Loan { get; set; }
+    public ICollection<LibrarianTask> LibrarianTasks { get; set; } = new List<LibrarianTask>();
+
     public void UpdateReservation()
     {
-        State = ReservationState.Completed;
+        State = ReservationState.Taken;
     }
 }

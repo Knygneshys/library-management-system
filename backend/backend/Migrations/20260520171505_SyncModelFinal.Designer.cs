@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using backend.Data;
 
@@ -10,9 +11,11 @@ using backend.Data;
 namespace backend.Migrations
 {
     [DbContext(typeof(LibraryDbContext))]
-    partial class LibraryDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260520171505_SyncModelFinal")]
+    partial class SyncModelFinal
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "10.0.6");
@@ -243,7 +246,7 @@ namespace backend.Migrations
 
                     b.HasIndex("ReservationId");
 
-                    b.ToTable("TaskServices");
+                    b.ToTable("LibrarianTasks");
                 });
 
             modelBuilder.Entity("backend.Models.Loan", b =>
@@ -478,7 +481,7 @@ namespace backend.Migrations
             modelBuilder.Entity("backend.Models.LibrarianTask", b =>
                 {
                     b.HasOne("backend.Models.Reservation", "Reservation")
-                        .WithMany("TaskServices")
+                        .WithMany("LibrarianTasks")
                         .HasForeignKey("ReservationId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -564,7 +567,7 @@ namespace backend.Migrations
                 {
                     b.Navigation("IssueCompartment");
 
-                    b.Navigation("TaskServices");
+                    b.Navigation("LibrarianTasks");
 
                     b.Navigation("Loan")
                         .IsRequired();
