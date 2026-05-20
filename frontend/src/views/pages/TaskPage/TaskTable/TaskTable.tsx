@@ -1,44 +1,44 @@
+// pages/TasksPage/TaskTable/TaskTable.tsx
 import {
   Table,
   TableBody,
   TableCell,
   TableHead,
   TableRow,
+  Button,
 } from "@mui/material";
 import type { Task } from "../../../../entities/Task";
 import { tableHeaderFontSize } from "../../../../constants/fontSizeConstants";
 
 interface Props {
   tasks: Task[];
+  onStart: (task: Task) => void;
 }
 
-export default function TaskTable({ tasks }: Props) {
+export default function TaskTable({ tasks, onStart }: Props) {
   return (
     <Table>
       <TableHead>
         <TableRow>
-          <TableCell sx={{ fontSize: tableHeaderFontSize, width: "25%" }}>
+          <TableCell sx={{ fontSize: tableHeaderFontSize }}>
             Task type
           </TableCell>
-          <TableCell sx={{ fontSize: tableHeaderFontSize, width: "20%" }}>
-            Librarian PIN
-          </TableCell>
-          <TableCell sx={{ fontSize: tableHeaderFontSize, width: "20%" }}>
-            Reader PIN
-          </TableCell>
-          <TableCell sx={{ fontSize: tableHeaderFontSize, width: "20%" }}>
-            Locker
-          </TableCell>
+          <TableCell />
         </TableRow>
       </TableHead>
-
       <TableBody>
         {tasks.map((task) => (
           <TableRow key={task.id.toString()}>
             <TableCell>{task.type}</TableCell>
-            <TableCell>{task.pinCodeLibrarian ?? "—"}</TableCell>
-            <TableCell>{task.pinCodeReader ?? "—"}</TableCell>
-            <TableCell>{task.lockerLocationCode ?? "—"}</TableCell>
+            <TableCell align="right">
+              <Button
+                variant="contained"
+                size="small"
+                onClick={() => onStart(task)}
+              >
+                Start
+              </Button>
+            </TableCell>
           </TableRow>
         ))}
       </TableBody>
