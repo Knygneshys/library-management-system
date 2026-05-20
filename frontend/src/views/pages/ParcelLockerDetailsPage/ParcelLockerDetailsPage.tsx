@@ -28,7 +28,7 @@ const ParcelLockerPage = () => {
   }
 
   return (
-    <Container maxWidth="md" sx={{ mt: 6 }}>
+    <Container maxWidth="lg" sx={{ mt: 6 }}>
       <Card elevation={3} sx={{ borderRadius: 3 }}>
         <CardContent>
           <Stack spacing={2} useFlexGap={true}>

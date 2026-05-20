@@ -25,13 +25,16 @@ public class LoanSeeder : ISeeder
 
         if (copy is null) return;
 
+        var user = await context.Users.FirstOrDefaultAsync();
+        if(user == null) return;
+
         var loan = new Loan
         {
             Id = Guid.NewGuid(),
             CopyId = copy.Id,
             ReservationId = reservation.Id,
-            LoanDate = DateTime.UtcNow,
-            ReturnDate = DateTime.UtcNow.AddDays(14)
+            UserId = user.Id,
+            LoanDate = DateTime.UtcNow
         };
 
         copy.IsTaken = true;

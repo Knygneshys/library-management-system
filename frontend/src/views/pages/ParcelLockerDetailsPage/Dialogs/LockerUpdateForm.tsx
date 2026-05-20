@@ -22,15 +22,8 @@ export default function LockerUpdateForm({
   };
 
   const handleFormSubmit = (values: LockerUpdateDto) => {
-    const updatedLocker: Locker = {
-      id: locker.id,
-      locationCode: values.locationCode,
-      height: values.height,
-      length: values.length,
-      width: values.width,
-      lockerState: values.lockerState,
-      parcelLockerId: locker.parcelLockerId,
-    };
+    // Senas locker atnaujintas su nauju values
+    const updatedLocker: Locker = {...locker, ...values}
 
     handleSubmit(updatedLocker);
   };

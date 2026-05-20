@@ -82,6 +82,17 @@ export const resetLocker = async (lockerId: string, pinCode: string) => {
   }
 };
 
+export const insertBook = async (lockerId: string, pinCode: string) => {
+  try {
+    const uri = `/locker/${lockerId}/insert`;
+    const response = await apiClient.post<{ success: boolean }>(uri, { pinCode });
+    return response.data;
+  } catch (error) {
+    console.error("Error inserting book:", error);
+    throw error;
+  }
+};
+
 export const submitPin = async (pinCode: string) => {
   try {
     // Jei įsidėsi į utils, pakeisk eilutę į: const uri = lockerUris.SUBMIT_PIN;

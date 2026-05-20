@@ -11,6 +11,6 @@ export type Locker = {
   parcelLockerId: number
 };
 
-// TODO: Naudoti Šitus DTO kaip backe o ne chui pariši kažkukius tai form content
+// TODO: Naudoti Šitus DTO kaip backe o ne form content
 // export type LockerCreateDto = Omit<Locker, "id" | "parcelLockerId" | "lockerState">
 export type LockerUpdateDto = Omit<Locker, "id" | "parcelLockerId">

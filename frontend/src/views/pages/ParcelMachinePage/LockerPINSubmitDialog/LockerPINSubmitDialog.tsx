@@ -3,13 +3,14 @@ import LockerPINSubmitForm from "./LockerPINSubmitForm/LockerPINSubmitForm";
 
 interface Props {
   isOpen: boolean;
+  body: string;
   handleClose: () => void;
   onSubmitPin: (pin: string) => void;
   isDoorOpened: boolean;
   onCloseDoor: () => void;
 }
 
-export default function LockerPINSubmitDialog({ isOpen, handleClose, onSubmitPin, isDoorOpened, onCloseDoor }: Props) {
+export default function LockerPINSubmitDialog({ isOpen, body, handleClose, onSubmitPin, isDoorOpened, onCloseDoor }: Props) {
   const dialogTitle = isDoorOpened ? "Spintelė atidaryta" : "Įvesti PIN kodą";
 
   return (
@@ -21,7 +22,7 @@ export default function LockerPINSubmitDialog({ isOpen, handleClose, onSubmitPin
           <LockerPINSubmitForm onSubmit={onSubmitPin} />
         ) : (
           <Box sx={{ mt: 2, p: 2, backgroundColor: "#e8f5e9", borderRadius: 2 }}>
-            <Typography sx={{ mb: 3 }}>Pasiėmę knygą, būtinai uždarykite dureles.</Typography>
+            <Typography sx={{ mb: 3 }}>{body}</Typography>
             <Button variant="outlined" color="error" onClick={onCloseDoor} fullWidth>
               Uždaryti dureles
             </Button>

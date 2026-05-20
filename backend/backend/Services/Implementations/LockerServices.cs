@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace backend.Services.Implementations;
 
-public class LockerServices(LibraryDbContext dbContext) : ILockerServices
+public class LockerServices(LibraryDbContext dbContext, IMailService mailService, ILogger<LockerServices> logger) : ILockerServices
 {
 
     private const string EntityName = "Locker";
@@ -136,12 +136,8 @@ public class LockerServices(LibraryDbContext dbContext) : ILockerServices
             .Include(l => l.IssueCompartment)
             .FirstOrDefaultAsync(l => l.IssueCompartment != null &&
                 (l.IssueCompartment.PinCodeReader == pinCode ||
-                 l.IssueCompartment.PinCodeLibrarian == pinCode));
-
-        if (locker == null)
-        {
-            return null; 
-        }
+                 l.IssueCompartment.PinCodeLibrarian == pinCode))
+            ?? throw new EntityNotFoundException(EntityName);
 
         return new LockerDto
         {
@@ -202,22 +198,23 @@ public class LockerServices(LibraryDbContext dbContext) : ILockerServices
 
             if (reservation != null)
             {
-                reservation.UpdateReservation();
+                reservation.IssueBook();
                 dbContext.Reservations.Update(reservation);
-                // create loan
-                var loan = Loan.Create(reservation);
-                await dbContext.Loans.AddAsync(loan);
+                // create loan, Šiaip copy reikia sužinot iš bibliotekininko išdavimo užduoties
+                // var loan = Loan.Create(reservation, copy);
+                // await dbContext.Loans.AddAsync(loan);
             }
         }
         else if (issueCompartment.PinCodeLibrarian == pinCode)
         {
             var reservation = await dbContext.Reservations
                 .Include(r => r.LibraryTasks)
+                .Include(r => r.Loan) // Knygą paima bibliotekininkas tai žinom kad Knyga jau buvo pasiskolinta ir loan nėra null
                 .FirstOrDefaultAsync(r => r.IssueCompartmentId == issueCompartment.Id);
 
-            if (reservation != null && reservation.CopyId.HasValue)
+            if (reservation != null && reservation.Loan != null)
             {
-                var copy = await dbContext.Copies.FindAsync(reservation.CopyId.Value);
+                var copy = reservation.Loan.Copy;
                 if (copy != null)
                 {
                     // pazymeti egzemplioriu kaip laisva
@@ -230,6 +227,7 @@ public class LockerServices(LibraryDbContext dbContext) : ILockerServices
                 if (task != null)
                 {
                     task.UpdateTask();
+                    dbContext.LibraryTasks.Update(task);
                 }
             }
         }
@@ -238,8 +236,111 @@ public class LockerServices(LibraryDbContext dbContext) : ILockerServices
             throw new Exception("Neteisingas PIN kodas. Operacija negalima.");
         }
 
-        dbContext.IssueCompartments.Remove(issueCompartment);
         await dbContext.SaveChangesAsync();
+    }
+
+    public async Task InsertBookAsync(Guid lockerId, string pinCode)
+    {
+        logger.LogInformation("Pradedama knygos įdėjimo operacija locker ID: {LockerId}", lockerId);
+
+        var locker = await dbContext.Lockers
+            .Include(l => l.IssueCompartment)
+            .Include(l => l.ParcelLocker)
+            .FirstOrDefaultAsync(l => l.Id == lockerId);
+
+        if (locker == null)
+        {
+            logger.LogWarning("Lockeris nerastas. ID: {LockerId}", lockerId);
+            throw new EntityNotFoundException(EntityName);
+        }
+
+        logger.LogInformation("Lockeris rastas: {LockerId}", locker.Id);
+
+        // 4.
+        locker.SetOccupied();
+        dbContext.Lockers.Update(locker);
+        logger.LogInformation("Lockeris {LockerId} pažymėtas kaip užimtas", locker.Id);
+
+        // 6.
+        var issueCompartment = IssueCompartment.GetByLocker(locker);
+        logger.LogInformation("Pagal locker rastas issueCompartment: {CompartmentId}", issueCompartment.Id);
+
+        // 8.
+        var reservation = await dbContext.Reservations
+            .Include(l => l.User)
+            .Include(l => l.Book)
+            .FirstOrDefaultAsync(r => r.IssueCompartmentId == issueCompartment.Id);
+
+        if (reservation == null)
+        {
+            logger.LogWarning("Rezervacija nerasta pagal Compartment ID: {CompartmentId}", issueCompartment.Id);
+            throw new EntityNotFoundException($"Reservation with issueCompartnment: {issueCompartment.Id}");
+        }
+
+        logger.LogInformation("Pagal issueCompartment rastas reservation: {ReservationId}", reservation.Id);
+
+        // Alt
+        if (issueCompartment.PinCodeReader == pinCode)
+        {
+            logger.LogInformation("Knygą įdėjo Skaitytojas. Rezervacijos ID: {ReservationId}", reservation.Id);
+            
+            // 10.
+            reservation.InsertBook();
+            dbContext.Reservations.Update(reservation);
+            logger.LogInformation("Atnaujinta rezervacijos {ReservationId} būsena į Completed", reservation.Id);
+            
+            // 12.
+            // var loan = await dbContext.Loans
+            //     .FirstOrDefaultAsync(l => l.ReservationId == reservation.Id)
+            //     ?? throw new EntityNotFoundException($"Loan with reservation: {reservation.Id}");
+
+            // logger.LogInformation("Pagal reservation rastas loan: {LoanId}", loan.Id);
+
+            // 14.
+            // loan.ReturnBook();
+            // dbContext.Loans.Update(loan);
+            // logger.LogInformation("Priskirtas loan {LoanId} ReturnDate į dabar", loan.Id);
+
+            // 16. TODO: Create task Entity
+            // var task = LibraryTask.Create(reservation, IsIssue: false); 
+            // await dbContext.LibraryTasks.AddAsync(task);
+            // logger.LogInformation("Sukurta Bibliotekininko knygos paėmimo užduotis: {TaskId}", task.Id);
+        }
+        else if (issueCompartment.PinCodeLibrarian == pinCode)
+        {
+            logger.LogInformation("Knygą įdėjo Bibliotekininkas. Rezervacijos ID: {ReservationId}", reservation.Id);
+            
+            // 18.
+            var task = reservation.LibraryTasks.FirstOrDefault(t => t.IsIssueTask == true && t.IsDone == false)
+                ?? throw new EntityNotFoundException($"Issue Task with reservation: {reservation.Id}");
+
+            logger.LogInformation("Rasta Bibliotekininko išdavimo užduotis pagal reservation. Užduotis: {TaskId}", task.Id);
+
+            // 20.
+            task.UpdateTask();
+            dbContext.LibraryTasks.Update(task);
+            logger.LogInformation("Užduotis {TaskId} pažymėta kaip Done", task.Id);
+
+            // 22. Siųsti paštą
+            var user = reservation.User ?? throw new Exception($"User not found from reservation: {reservation.Id}");
+
+            await mailService.SendLockerNotificationAsync(
+                recipientEmail: user.Email,
+                bookTitle: reservation.Book.Title,
+                lockerAddress: locker.ParcelLocker.Address,
+                openCode: pinCode,
+                daysToPickUp: 3
+            );
+            logger.LogInformation("Išsiųstas laiškas naudotojui: ID: {UserId}, Email: {Email}", user.Id, user.Email);
+        }
+        else
+        {
+            logger.LogWarning("Bandymas atidaryti locker {LockerId} su neteisingu PIN kodu", lockerId);
+            throw new Exception("Neteisingas PIN kodas. Operacija negalima.");
+        }
+
+        await dbContext.SaveChangesAsync();
+        logger.LogInformation("Visi duombazės pakeitimai sėkmingai išsaugoti locker ID: {LockerId}", lockerId);
     }
 
 }

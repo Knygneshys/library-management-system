@@ -20,6 +20,7 @@ public class LibraryDbContext(DbContextOptions<LibraryDbContext> options) : DbCo
     public DbSet<Reservation> Reservations { get; set; }
     public DbSet<IssueCompartment> IssueCompartments { get; set; }
     public DbSet<LibraryTask> LibraryTasks { get; set; }
+    public DbSet<User> Users { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -81,10 +82,22 @@ public class LibraryDbContext(DbContextOptions<LibraryDbContext> options) : DbCo
                 .HasForeignKey<Loan>(l => l.ReservationId)
                 .IsRequired();
 
+        modelBuilder.Entity<Loan>()
+                .HasOne(r => r.User)
+                .WithMany(u => u.Loans)
+                .HasForeignKey(r => r.UserId)
+                .IsRequired();
+
         modelBuilder.Entity<Reservation>()
                 .HasOne(r => r.Book)
                 .WithMany(b => b.Reservations)
                 .HasForeignKey(r => r.BookId)
+                .IsRequired();
+
+        modelBuilder.Entity<Reservation>()
+                .HasOne(r => r.User)
+                .WithMany(u => u.Reservations)
+                .HasForeignKey(r => r.UserId)
                 .IsRequired();
 
         modelBuilder.Entity<PrintingHouse>()
@@ -116,11 +129,6 @@ public class LibraryDbContext(DbContextOptions<LibraryDbContext> options) : DbCo
                 .HasForeignKey<Loan>(l => l.CopyId)
                 .IsRequired();
 
-        modelBuilder.Entity<Reservation>()
-                .HasOne(r => r.Copy)
-                .WithOne(c => c.Reservation)
-                .HasForeignKey<Reservation>(r => r.CopyId)
-                .IsRequired(false);
 
         modelBuilder.Entity<LibraryTask>()
                 .HasOne(t => t.Reservation)

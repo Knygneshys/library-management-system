@@ -26,23 +26,23 @@ export function LockerTable({
      <Table>
       <TableHead>
         <TableRow>
-          <TableCell sx={{ fontSize: tableHeaderFontSize, width: "15%" }}>
+          <TableCell sx={{ fontSize: tableHeaderFontSize}}>
             Location Code
           </TableCell>
 
-          <TableCell sx={{ fontSize: tableHeaderFontSize, width: "15%" }}>
+          <TableCell sx={{ fontSize: tableHeaderFontSize}}>
             Height
           </TableCell>
 
-          <TableCell sx={{ fontSize: tableHeaderFontSize, width: "15%" }}>
+          <TableCell sx={{ fontSize: tableHeaderFontSize}}>
             Width
           </TableCell>
 
-          <TableCell sx={{ fontSize: tableHeaderFontSize, width: "15%" }}>
+          <TableCell sx={{ fontSize: tableHeaderFontSize}}>
             Length
           </TableCell>
 
-          <TableCell sx={{ fontSize: tableHeaderFontSize, width: "20%" }}>
+          <TableCell sx={{ fontSize: tableHeaderFontSize}}>
             State
           </TableCell>
 

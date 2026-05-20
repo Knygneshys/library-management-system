@@ -7,6 +7,8 @@
     </PropertyGroup>
 
     <ItemGroup>
+        <PackageReference Include="Google.Apis.Auth" Version="1.74.0" />
+        <PackageReference Include="Google.Apis.Gmail.v1" Version="1.74.0.4148" />
         <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="10.0.6" />
         <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="10.0.6">
           <PrivateAssets>all</PrivateAssets>
@@ -17,7 +19,15 @@
           <PrivateAssets>all</PrivateAssets>
           <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
         </PackageReference>
+        <PackageReference Include="Microsoft.Extensions.Http" Version="10.0.8" />
+        <PackageReference Include="MimeKit" Version="4.16.0" />
         <PackageReference Include="Swashbuckle.AspNetCore" Version="10.1.7" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <None Update="client_secrets.json">
+          <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </None>
     </ItemGroup>
 
 </Project>

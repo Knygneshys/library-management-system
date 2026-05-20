@@ -3,6 +3,11 @@
 ##
 ## Get latest from `dotnet new gitignore`
 
+# Google Mail API
+client_secrets.json
+GmailTokens/
+**/GmailTokens/
+
 # dotenv files
 .env
 

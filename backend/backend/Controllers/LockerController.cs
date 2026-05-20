@@ -6,7 +6,7 @@ namespace backend.Controllers;
 
 [Route("api/[controller]")]
 [ApiController]
-public class LockerController(ILockerServices lockerServices) : ControllerBase
+public class LockerController(ILockerServices lockerServices, ILogger<LockerController> logger) : ControllerBase
 {
     [HttpPost("{parelLockerId:guid}")]
     public async Task<IActionResult> CreateLocker([FromRoute] Guid parelLockerId, [FromBody] LockerCreateDto dto)
@@ -126,6 +126,7 @@ public class LockerController(ILockerServices lockerServices) : ControllerBase
             return BadRequest(new { message = ex.Message });
         }
     }
+
     [HttpPost("{id:guid}/reset")]
     public async Task<IActionResult> ResetLocker([FromRoute] Guid id, [FromBody] ResetLockerDto dto)
     {
@@ -136,6 +137,21 @@ public class LockerController(ILockerServices lockerServices) : ControllerBase
         }
         catch (Exception ex)
         {
+            return BadRequest(new { message = ex.Message });
+        }
+    }
+
+    [HttpPost("{id:guid}/insert")]
+    public async Task<IActionResult> InsertBook([FromRoute] Guid id, [FromBody] InsertLockerDto dto)
+    {
+        try
+        {
+            await lockerServices.InsertBookAsync(id, dto.PinCode);
+            return Ok();
+        }
+        catch (Exception ex)
+        {
+            logger.LogError(ex, "Klaida vykdant InsertBook operaciją lockerID: {LockerId}", id);
             return BadRequest(new { message = ex.Message });
         }
     }
