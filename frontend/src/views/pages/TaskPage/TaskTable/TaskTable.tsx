@@ -17,22 +17,27 @@ export default function TaskTable({ tasks }: Props) {
     <Table>
       <TableHead>
         <TableRow>
-          <TableCell sx={{ fontSize: tableHeaderFontSize, width: "30%" }}>
+          <TableCell sx={{ fontSize: tableHeaderFontSize, width: "25%" }}>
             Task type
           </TableCell>
           <TableCell sx={{ fontSize: tableHeaderFontSize, width: "20%" }}>
-            PIN code
+            Librarian PIN
+          </TableCell>
+          <TableCell sx={{ fontSize: tableHeaderFontSize, width: "20%" }}>
+            Reader PIN
           </TableCell>
           <TableCell sx={{ fontSize: tableHeaderFontSize, width: "20%" }}>
             Locker
           </TableCell>
         </TableRow>
       </TableHead>
+
       <TableBody>
-        {tasks.map((task, index) => (
-          <TableRow key={index}>
+        {tasks.map((task) => (
+          <TableRow key={task.id.toString()}>
             <TableCell>{task.type}</TableCell>
-            <TableCell>{task.pin ?? "—"}</TableCell>
+            <TableCell>{task.pinCodeLibrarian ?? "—"}</TableCell>
+            <TableCell>{task.pinCodeReader ?? "—"}</TableCell>
             <TableCell>{task.lockerLocationCode ?? "—"}</TableCell>
           </TableRow>
         ))}

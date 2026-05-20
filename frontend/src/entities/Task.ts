@@ -8,5 +8,6 @@ export type Task = {
   reservationId: Guid;
   lockerId: Guid | null;
   lockerLocationCode: string | null;
-  pin: string | null;
+  pinCodeLibrarian: string | null;
+  pinCodeReader: string | null;
 };
