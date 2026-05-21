@@ -41,11 +41,8 @@ export default function BookDetailsModal({
 
   if (!book) return null;
 
-  console.log(book);
-
-  const canReturn = false;
-  //book.activeReservation?.state === ReservationState.NotLate ||
-  //book.activeReservation?.state === ReservationState.Late;
+  const canReturn = book.activeReservation?.state === ReservationState.NotLate ||
+                    book.activeReservation?.state === ReservationState.Late;
 
   const canReserve = book.freeCopyCount > 0;
 

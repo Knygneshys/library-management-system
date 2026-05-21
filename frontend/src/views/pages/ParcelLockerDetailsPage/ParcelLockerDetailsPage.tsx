@@ -9,7 +9,7 @@ import {
   Chip,
   Divider,
 } from "@mui/material";
-import { ParcelLockerState } from "../../../entities/ParcelLockerState";
+//import { ParcelLockerState } from "../../../entities/ParcelLockerState";
 import LockerList from "./LockerList";
 import { useParcelLockers } from "../../../hooks/useParcelLockers";
 
@@ -50,7 +50,7 @@ const ParcelLockerPage = () => {
                 </Typography>
                 <Typography variant="body1">{parcelLocker.address}</Typography>
               </div>
-              <Chip label={ParcelLockerState[parcelLocker.lockerState]} />
+              <Chip label={parcelLocker.lockerState} />
             </Stack>
 
             <Divider />
